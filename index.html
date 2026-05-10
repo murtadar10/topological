@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Differential Topology Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #f5f0e8;
+    --accent: #c0392b;
+    --gold: #d4a017;
+    --muted: #7a7065;
+    --correct: #2d6a4f;
+    --wrong: #c0392b;
+    --card-bg: #fffdf8;
+    --border: #d9d0c0;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background-color: var(--paper);
+    background-image: radial-gradient(ellipse at 20% 50%, rgba(192,57,43,.04) 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 20%, rgba(212,160,23,.05) 0%, transparent 50%);
+    font-family: 'Source Serif 4', Georgia, serif;
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .container { width:100%; max-width:780px; }
+
+  /* ── HEADER ── */
+  .header { text-align:center; margin-bottom:44px; animation: fadeDown .6s ease both; }
+  .header-label { font-size:11px; letter-spacing:4px; text-transform:uppercase; color:var(--accent); margin-bottom:10px; font-weight:600; }
+  .header h1 { font-family:'Playfair Display',serif; font-size:clamp(26px,5vw,44px); font-weight:900; line-height:1.1; }
+  .header h1 span { color:var(--accent); }
+  .header-line { width:60px; height:3px; background:var(--gold); margin:14px auto 0; }
+
+  /* ── MODE SELECTION ── */
+  #modeScreen { animation: fadeUp .5s ease both; }
+  .mode-subtitle { text-align:center; color:var(--muted); font-size:15px; font-style:italic; margin-bottom:36px; }
+  .mode-cards { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .mode-card {
+    background:var(--card-bg); border:1.5px solid var(--border); border-radius:4px;
+    padding:36px 28px; cursor:pointer; text-align:center;
+    transition:all .25s ease; position:relative; overflow:hidden;
+  }
+  .mode-card::before { content:''; position:absolute; top:0;left:0;right:0; height:3px; background:var(--border); transition:background .25s; }
+  .mode-card:hover { transform:translateY(-4px); box-shadow:0 10px 28px rgba(26,26,46,.1); border-color:var(--accent); }
+  .mode-card:hover::before { background:linear-gradient(90deg,var(--accent),var(--gold)); }
+  .mode-icon { font-size:40px; margin-bottom:16px; display:block; }
+  .mode-title { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; margin-bottom:8px; }
+  .mode-desc { color:var(--muted); font-size:13px; line-height:1.6; }
+  .mode-count { display:inline-block; margin-top:14px; background:rgba(192,57,43,.08); color:var(--accent); font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; padding:4px 12px; border-radius:2px; }
+
+  /* ── PROGRESS ── */
+  #progressWrap { margin-bottom:28px; animation: fadeDown .5s .1s ease both; display:none; }
+  .progress-info { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
+  .progress-text { font-size:13px; color:var(--muted); letter-spacing:.5px; }
+  .progress-count { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; }
+  .progress-bar-track { height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
+  .progress-bar-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--gold)); border-radius:2px; transition:width .5s cubic-bezier(.4,0,.2,1); }
+
+  /* ── QUIZ CARD ── */
+  #quizCard { background:var(--card-bg); border:1px solid var(--border); border-radius:4px; padding:40px 44px;
+    box-shadow:0 2px 8px rgba(26,26,46,.06),0 1px 2px rgba(26,26,46,.04),inset 0 1px 0 rgba(255,255,255,.8);
+    animation:fadeUp .5s ease both; position:relative; overflow:hidden; display:none; }
+  #quizCard::before { content:''; position:absolute; top:0;left:0;right:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--gold)); }
+
+  .q-type-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(192,57,43,.08); color:var(--accent);
+    font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; padding:4px 12px; border-radius:2px; margin-bottom:18px; }
+  .q-type-badge.mcq { background:rgba(212,160,23,.1); color:#a07810; }
+
+  .question-text { font-size:clamp(14px,2.4vw,17px); line-height:1.75; color:var(--ink); margin-bottom:30px; }
+  .question-text .q-num { font-family:'Playfair Display',serif; font-weight:700; color:var(--accent); margin-right:4px; }
+
+  /* TRUE / FALSE */
+  .tf-buttons { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .tf-btn { padding:18px 24px; border:1.5px solid var(--border); border-radius:3px; background:white; cursor:pointer;
+    font-family:'Source Serif 4',serif; font-size:17px; font-weight:600; color:var(--ink);
+    transition:all .2s; display:flex; align-items:center; justify-content:center; gap:10px; }
+  .tf-btn:hover:not(:disabled) { border-color:var(--accent); background:rgba(192,57,43,.04); transform:translateY(-2px); box-shadow:0 4px 12px rgba(192,57,43,.12); }
+  .tf-btn .icon { font-size:20px; }
+
+  /* MCQ */
+  .mcq-options { display:flex; flex-direction:column; gap:10px; }
+  .mcq-btn { padding:13px 18px; border:1.5px solid var(--border); border-radius:3px; background:white; cursor:pointer;
+    font-family:'Source Serif 4',serif; font-size:15px; color:var(--ink);
+    transition:all .2s; text-align:left; display:flex; align-items:flex-start; gap:14px; line-height:1.5; }
+  .mcq-btn:hover:not(:disabled) { border-color:var(--gold); background:rgba(212,160,23,.05); transform:translateX(4px); }
+  .option-letter { font-family:'Playfair Display',serif; font-weight:700; font-size:16px; color:var(--muted); min-width:22px; }
+
+  /* ANSWER STATES */
+  .btn-correct { border-color:var(--correct)!important; background:rgba(45,106,79,.08)!important; }
+  .btn-correct .option-letter, .tf-btn.btn-correct { color:var(--correct)!important; }
+  .btn-wrong { border-color:var(--wrong)!important; background:rgba(192,57,43,.08)!important; }
+  .btn-wrong .option-letter, .tf-btn.btn-wrong { color:var(--wrong)!important; }
+  .tf-btn.btn-correct { border-color:var(--correct)!important; background:rgba(45,106,79,.08)!important; }
+  .tf-btn.btn-wrong   { border-color:var(--wrong)!important;   background:rgba(192,57,43,.08)!important; }
+
+  /* EXPLANATION */
+  .explanation { margin-top:22px; padding:16px 18px; border-left:3px solid var(--gold); background:rgba(212,160,23,.06);
+    border-radius:0 3px 3px 0; font-size:14px; line-height:1.7; color:#4a3f2f; display:none; animation:fadeUp .3s ease both; }
+  .explanation.show { display:block; }
+  .explanation strong { color:var(--ink); font-weight:600; }
+
+  /* NEXT BUTTON */
+  .next-btn { margin-top:26px; width:100%; padding:15px; background:var(--ink); color:var(--paper); border:none; border-radius:3px;
+    font-family:'Source Serif 4',serif; font-size:15px; font-weight:600; letter-spacing:1px; text-transform:uppercase;
+    cursor:pointer; transition:all .2s; display:none; }
+  .next-btn.show { display:block; }
+  .next-btn:hover { background:var(--accent); transform:translateY(-1px); box-shadow:0 4px 16px rgba(192,57,43,.25); }
+
+  /* RESULTS */
+  #results { text-align:center; padding:10px 0; animation:fadeUp .6s ease both; display:none; }
+  .score-ring { width:140px; height:140px; margin:0 auto 26px; position:relative; }
+  .score-ring svg { transform:rotate(-90deg); }
+  .score-ring circle { fill:none; stroke-width:8; stroke-linecap:round; }
+  .ring-bg { stroke:var(--border); }
+  .ring-fill { stroke:var(--accent); stroke-dasharray:345; stroke-dashoffset:345; transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1) .3s; }
+  .score-number { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    font-family:'Playfair Display',serif; font-size:34px; font-weight:900; }
+  .score-number span { font-size:15px; color:var(--muted); }
+  .result-title { font-family:'Playfair Display',serif; font-size:26px; font-weight:700; margin-bottom:6px; }
+  .result-subtitle { color:var(--muted); font-size:15px; margin-bottom:32px; font-style:italic; }
+  .result-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:3px; overflow:hidden; margin-bottom:24px; }
+  .stat-box { background:var(--card-bg); padding:18px 10px; }
+  .stat-val { font-family:'Playfair Display',serif; font-size:26px; font-weight:700; }
+  .stat-val.green { color:var(--correct); } .stat-val.red { color:var(--wrong); } .stat-val.gold { color:var(--gold); }
+  .stat-lbl { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-top:4px; }
+  .result-buttons { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+  .res-btn { padding:13px 32px; border:none; border-radius:3px; font-family:'Source Serif 4',serif; font-size:14px; font-weight:600; letter-spacing:1px; text-transform:uppercase; cursor:pointer; transition:all .2s; }
+  .res-btn.primary { background:var(--accent); color:white; }
+  .res-btn.primary:hover { background:var(--ink); transform:translateY(-2px); box-shadow:0 6px 20px rgba(26,26,46,.2); }
+  .res-btn.secondary { background:white; color:var(--ink); border:1.5px solid var(--border); }
+  .res-btn.secondary:hover { border-color:var(--ink); transform:translateY(-2px); }
+
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeUp   { from{opacity:0;transform:translateY(16px)}  to{opacity:1;transform:translateY(0)} }
+
+  @media(max-width:520px) {
+    .mode-cards { grid-template-columns:1fr; }
+    #quizCard { padding:26px 18px; }
+    .tf-buttons { grid-template-columns:1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-label">Exam Preparation</div>
+    <h1>Differential <span>Topology</span></h1>
+    <div class="header-line"></div>
+  </div>
+
+  <!-- MODE SELECTION -->
+  <div id="modeScreen">
+    <p class="mode-subtitle">Choose the type of quiz you want to practice</p>
+    <div class="mode-cards">
+      <div class="mode-card" onclick="startQuiz('tf')">
+        <span class="mode-icon">✓✗</span>
+        <div class="mode-title">True or False</div>
+        <div class="mode-desc">Test your knowledge of core definitions, theorems, and properties.</div>
+        <div class="mode-count">50 Questions</div>
+      </div>
+      <div class="mode-card" onclick="startQuiz('mcq')">
+        <span class="mode-icon">◉</span>
+        <div class="mode-title">Multiple Choice</div>
+        <div class="mode-desc">Select the correct answer from four options for each question.</div>
+        <div class="mode-count">50 Questions</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div id="progressWrap">
+    <div class="progress-info">
+      <span class="progress-text" id="modeLabel">True / False</span>
+      <span class="progress-count" id="progressCount">1 / 50</span>
+    </div>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- QUIZ CARD -->
+  <div id="quizCard">
+    <div id="qTypeBadge" class="q-type-badge">True / False</div>
+    <p class="question-text" id="questionText"></p>
+    <div id="answersArea"></div>
+    <div class="explanation" id="explanation"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question →</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results">
+    <div class="score-ring">
+      <svg width="140" height="140" viewBox="0 0 140 140">
+        <circle class="ring-bg" cx="70" cy="70" r="55"/>
+        <circle class="ring-fill" id="ringFill" cx="70" cy="70" r="55"/>
+      </svg>
+      <div class="score-number" id="scoreNumber">0<span>%</span></div>
+    </div>
+    <div class="result-title"  id="resultTitle"></div>
+    <div class="result-subtitle" id="resultSubtitle"></div>
+    <div class="result-stats">
+      <div class="stat-box"><div class="stat-val green" id="statCorrect">0</div><div class="stat-lbl">Correct</div></div>
+      <div class="stat-box"><div class="stat-val red"   id="statWrong">0</div><div class="stat-lbl">Wrong</div></div>
+      <div class="stat-box"><div class="stat-val gold"  id="statTotal">50</div><div class="stat-lbl">Total</div></div>
+    </div>
+    <div class="result-buttons">
+      <button class="res-btn primary"   onclick="retryQuiz()">Try Again</button>
+      <button class="res-btn secondary" onclick="goHome()">Change Mode</button>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+/* ════════════════════════════════════════════════════════
+   TRUE / FALSE  —  50 Questions
+════════════════════════════════════════════════════════ */
+const tfQuestions = [
+  { num:1,  q:"The circle S¹ can be described as {(x,y) ∈ ℝ² | x² + y² = 1}.", answer:true,
+    exp:"S¹ is the standard unit circle in ℝ²." },
+  { num:2,  q:"A smooth manifold must be Hausdorff and second-countable by definition.", answer:true,
+    exp:"By definition a smooth manifold is a topological manifold (Hausdorff + second-countable) with a smooth atlas." },
+  { num:3,  q:"Every immersion S¹ ↪ ℝ³ is regularly homotopic to an embedding.", answer:true,
+    exp:"True (Proposition 1.2.1). In ℝ³ there is enough room to remove self-intersections via regular homotopy." },
+  { num:4,  q:"The reflection map refl : A² → ℝ², (x,y) ↦ (x,−y) preserves orientation.", answer:false,
+    exp:"Reflection has Jacobian determinant −1, so it reverses orientation." },
+  { num:5,  q:"The composition ev = refl ∘ inv on A³ preserves orientation.", answer:true,
+    exp:"Two orientation-reversing maps compose to an orientation-preserving map." },
+  { num:6,  q:"The Gauss map of an immersion eₛ : S¹ → ℝ² gives a map S¹ → S¹ using normalised derivatives.", answer:true,
+    exp:"The Gauss map sends each point to the unit tangent vector, which lives in S¹." },
+  { num:7,  q:"The winding number of gauss(id|S¹) is −1 (clockwise once).", answer:false,
+    exp:"The identity gives winding number +1 (counterclockwise); eversion gives −1." },
+  { num:8,  q:"A topological manifold of dimension k is locally homeomorphic to an open subset of ℝᵏ.", answer:true,
+    exp:"This is the definition of a topological manifold." },
+  { num:9,  q:"The long line is a topological manifold that is Hausdorff but not second-countable.", answer:true,
+    exp:"The long line is locally Euclidean and Hausdorff, but fails second-countability." },
+  { num:10, q:"Transition functions ψ_αβ = φ_β⁻¹ ∘ φ_α in a smooth atlas are diffeomorphisms.", answer:true,
+    exp:"Smooth atlases require all transition functions to be smooth diffeomorphisms." },
+  { num:11, q:"Every topological space admits a unique maximal smooth atlas.", answer:false,
+    exp:"Only topological manifolds can have smooth atlases, and may have multiple non-diffeomorphic ones (e.g., exotic ℝ⁴)." },
+  { num:12, q:"The sphere S⁷ admits a unique smooth structure up to diffeomorphism.", answer:false,
+    exp:"Milnor showed S⁷ has 28 distinct smooth structures." },
+  { num:13, q:"ℝ⁴ admits uncountably many smooth structures up to diffeomorphism.", answer:true,
+    exp:"Exotic ℝ⁴ — there are uncountably many exotic smooth structures on ℝ⁴." },
+  { num:14, q:"If U ⊂ X is open in a smooth manifold X, then U inherits a smooth structure.", answer:true,
+    exp:"Open subsets inherit a smooth structure by restriction of the ambient atlas." },
+  { num:15, q:"The product M × N of smooth manifolds of dimensions m, n has dimension m + n.", answer:true,
+    exp:"Product manifolds add dimensions: dim(M × N) = dim M + dim N." },
+  { num:16, q:"A 1-dimensional complex manifold is always a 2-dimensional smooth manifold.", answer:true,
+    exp:"ℂ ≅ ℝ², and holomorphic maps are smooth, so a 1-dim complex manifold is a 2-dim smooth manifold." },
+  { num:17, q:"The moduli space of genus g Riemann surfaces with n marked points has expected real dimension 6g − 6 + 2n.", answer:true,
+    exp:"True by Riemann's count (Riemann-Roch theory)." },
+  { num:18, q:"The inverse function theorem states: if Dg_a is surjective, then g is locally a diffeomorphism.", answer:false,
+    exp:"The IFT requires Dg_a to be invertible (square, non-zero determinant). Surjectivity is for the submersion theorem." },
+  { num:19, q:"If g : ℝⁿ → ℝᵖ and Dg_x is surjective for all x ∈ g⁻¹(c), then g⁻¹(c) is an (n−p)-submanifold.", answer:true,
+    exp:"Regular level set theorem: surjectivity of Dg at every point of a level set makes it a submanifold of dimension n−p." },
+  { num:20, q:"The 2-torus can be constructed as S¹ × S¹.", answer:true,
+    exp:"T² = S¹ × S¹ is the standard construction of the 2-torus." },
+  { num:21, q:"The quotient ℝ²/ℤ² does not inherit a smooth structure.", answer:false,
+    exp:"ℤ² acts freely and properly discontinuously, so the quotient is a smooth manifold (the torus)." },
+  { num:22, q:"PSL₂(ℤ) acts freely on the upper half-plane ℍ².", answer:false,
+    exp:"Points like i and e^(2πi/6) have non-trivial stabilisers." },
+  { num:23, q:"The j-invariant gives a diffeomorphism ℍ²/PSL₂(ℤ) → ℂ.", answer:true,
+    exp:"True (stated in the notes): j is a bijection from the modular curve to ℂ." },
+  { num:24, q:"A continuous map f : M → N is smooth iff for every point there exist charts making the local representation smooth.", answer:true,
+    exp:"True (Corollary 4.1.10). Smoothness is a local condition on chart representations." },
+  { num:25, q:"The diagonal map Δ : M → M × M, p ↦ (p,p) is smooth.", answer:true,
+    exp:"True (Example 4.1.11). Δ is smooth as its components are both the identity." },
+  { num:26, q:"GL_n(ℝ) is not a smooth manifold because it is not closed in M_n(ℝ).", answer:false,
+    exp:"GL_n(ℝ) is open in M_n(ℝ) (complement of det = 0), hence a smooth manifold." },
+  { num:27, q:"A Lie group is a smooth manifold with smooth group multiplication and inversion.", answer:true,
+    exp:"True by definition (Definition 4.1.18)." },
+  { num:28, q:"The tangent space T_m M of a k-dimensional manifold is a k-dimensional real vector space.", answer:true,
+    exp:"T_m M is canonically a k-dimensional real vector space, regardless of the definition used." },
+  { num:29, q:"Derivations on the algebra of function germs E(M,m) form a vector space isomorphic to T_m M.", answer:true,
+    exp:"True (Algebraic definition). Der(E(M,m)) ≅ T_m M as vector spaces." },
+  { num:30, q:"The partial derivatives ∂/∂xᵢ at 0 form a basis of T₀ℝᵏ.", answer:true,
+    exp:"True (Proposition 4.2.8). The coordinate derivations form the standard basis." },
+  { num:31, q:"For a smooth map f : M → N, d_m f is always injective.", answer:false,
+    exp:"d_m f can be injective (immersion), surjective (submersion), or neither." },
+  { num:32, q:"Chain rule: d_m(g ∘ f) = d_{f(m)}g ∘ d_m f.", answer:true,
+    exp:"True (Lemma 4.2.10). The chain rule holds for smooth maps between manifolds." },
+  { num:33, q:"If f is a diffeomorphism, then d_m f is an isomorphism for all m.", answer:true,
+    exp:"A diffeomorphism has invertible derivative at every point." },
+  { num:34, q:"The tangent bundle TM is always a trivial vector bundle.", answer:false,
+    exp:"e.g., TS² is non-trivial by the hairy ball theorem." },
+  { num:35, q:"For open U ⊂ ℝᵏ, TU ≅ U × ℝᵏ.", answer:true,
+    exp:"True (Example 5.2.4). Open subsets of ℝᵏ have trivial tangent bundle." },
+  { num:36, q:"The derivative df : TM → TN is always smooth.", answer:true,
+    exp:"True (Lemma 5.2.5). The total derivative map between tangent bundles is smooth." },
+  { num:37, q:"A vector bundle is trivial if it is isomorphic to X × ℝᵏ.", answer:true,
+    exp:"This is the definition of a trivial vector bundle." },
+  { num:38, q:"The Möbius strip is a non-trivial 1-dimensional vector bundle over S¹.", answer:true,
+    exp:"True (Example 5.1.6). The Möbius strip is the canonical example of a non-trivial line bundle." },
+  { num:39, q:"The kernel of a vector bundle map of constant rank is a subbundle.", answer:true,
+    exp:"True (Lemma 5.3.3). Constant rank ensures the kernel has constant fibre dimension." },
+  { num:40, q:"Every immersion S¹ ↪ ℝ² is regularly homotopic to the standard embedding.", answer:false,
+    exp:"The winding number is a regular homotopy invariant; immersions with different winding numbers are not regularly homotopic." },
+  { num:41, q:"Sphere eversion (S² turned inside out) is possible via a regular homotopy but not via an isotopy.", answer:true,
+    exp:"True (Smale's theorem). Regular homotopy allows self-intersections; isotopy does not." },
+  { num:42, q:"Every 1-dimensional smooth manifold is diffeomorphic to ℝ or S¹.", answer:false,
+    exp:"Only connected 1-manifolds; disconnected ones can be disjoint unions." },
+  { num:43, q:"ℝPᵏ = Sᵏ / {x ~ −x}.", answer:true,
+    exp:"True (Example 2.2.9). Real projective space is the sphere with antipodal points identified." },
+  { num:44, q:"ℂPᵏ has real dimension 2k.", answer:true,
+    exp:"True (Problem 2.3.6). ℂPᵏ is a 2k-dimensional smooth manifold." },
+  { num:45, q:"Transition functions in a smooth atlas are required to be homeomorphisms but not necessarily smooth.", answer:false,
+    exp:"They must be smooth diffeomorphisms by definition of a smooth atlas." },
+  { num:46, q:"Every smooth manifold can be embedded in some Euclidean space.", answer:true,
+    exp:"True by the Whitney embedding theorem." },
+  { num:47, q:"The moduli space of genus 0 Riemann surfaces has dimension 0.", answer:true,
+    exp:"For g=0, n=0: 6(0)−6+0 = −6 < 0, but the space has a unique element (the Riemann sphere), dimension 0." },
+  { num:48, q:"Derivative of the diagonal map Δ : M → M × M is v ↦ (v,v).", answer:true,
+    exp:"True (Example 4.2.12). The derivative of Δ duplicates each tangent vector." },
+  { num:49, q:"The space of derivations Der(E(M,m)) is infinite-dimensional for any positive-dimensional manifold.", answer:false,
+    exp:"It is finite-dimensional, with dimension equal to dim M." },
+  { num:50, q:"The j-invariant is a modular form of weight 0.", answer:true,
+    exp:"True. The j-invariant satisfies j((az+b)/(cz+d)) = j(z), so it is weight 0." },
+];
+
+/* ════════════════════════════════════════════════════════
+   MULTIPLE CHOICE  —  50 Questions
+════════════════════════════════════════════════════════ */
+const mcqQuestions = [
+  { num:51, q:"Dimension of ℝPᵏ?",
+    opts:["k − 1","k","k + 1","2k"], ans:1,
+    exp:"ℝPᵏ = Sᵏ/{±1} has dimension k." },
+  { num:52, q:"Which map on A² preserves orientation?",
+    opts:["(x, −y)","(x/(x²+y²), y/(x²+y²))","(−y, x)","Both A and B"], ans:2,
+    exp:"(−y, x) is a 90° rotation; its Jacobian has determinant +1." },
+  { num:53, q:"Winding number of gauss(ev|S¹)?",
+    opts:["0","1","−1","2"], ans:2,
+    exp:"The eversion map has winding number −1." },
+  { num:54, q:"Which is NOT required for a smooth manifold?",
+    opts:["Hausdorff","Second-countable","Compact","Locally Euclidean"], ans:2,
+    exp:"Compactness is not required; ℝⁿ is a non-compact smooth manifold." },
+  { num:55, q:"Transition function ψ_αβ maps between:",
+    opts:["Open subsets of ℝᵏ","Closed subsets of ℝᵏ","Whole ℝᵏ","X itself"], ans:0,
+    exp:"Transition functions map between open subsets of ℝᵏ (images of overlapping chart domains)." },
+  { num:56, q:"How many smooth structures on ℝ⁴ up to diffeomorphism?",
+    opts:["1","15","Uncountably many","None"], ans:2,
+    exp:"There are uncountably many exotic smooth structures on ℝ⁴." },
+  { num:57, q:"Dimension of T² = S¹ × S¹?",
+    opts:["1","2","3","4"], ans:1,
+    exp:"dim(S¹ × S¹) = 1 + 1 = 2." },
+  { num:58, q:"Submersion theorem says locally g looks like:",
+    opts:["identity","projection π_p","inclusion ι","constant"], ans:1,
+    exp:"By the submersion theorem, a submersion is locally equivalent to the projection onto the first p coordinates." },
+  { num:59, q:"Which quotient yields a smooth manifold?",
+    opts:["ℝ²/ℤ","ℝ²/ℤ²","ℍ²/PSL₂(ℤ)","All of the above"], ans:3,
+    exp:"All three are smooth manifolds (the last after resolving orbifold points)." },
+  { num:60, q:"Smoothness of f : M → N is defined by:",
+    opts:["Differentiable in calculus sense","Composition with charts gives smooth maps","Homeomorphism","Image open"], ans:1,
+    exp:"Smoothness means φ ∘ f ∘ ψ⁻¹ is smooth between Euclidean open sets for all charts." },
+  { num:61, q:"Algebraic definition of d_m f:",
+    opts:["X ↦ f(m)·X","X ↦ X ∘ f*","X ↦ f ∘ X","X ↦ X(m)f"], ans:1,
+    exp:"The algebraic differential d_m f sends a derivation X to X ∘ f* (precomposition with f*)." },
+  { num:62, q:"Which is NOT a Lie group?",
+    opts:["GL_n(ℝ)","O(n)","S²","ℝⁿ"], ans:2,
+    exp:"S² does not admit a Lie group structure (no continuous group operation making it a group)." },
+  { num:63, q:"Dimension of O(n):",
+    opts:["n²","n(n−1)/2","n(n+1)/2","n"], ans:1,
+    exp:"O(n) has dimension n(n−1)/2 from counting independent constraints of AᵀA = I." },
+  { num:64, q:"Rank of derivative of g(x) = x₀² + … + xₙ² on Sⁿ:",
+    opts:["0","1","n","n + 1"], ans:1,
+    exp:"g : ℝⁿ⁺¹ → ℝ has Dg_x = 2x, which is a 1×(n+1) matrix of rank 1 for x ≠ 0." },
+  { num:65, q:"Geometers' definition of tangent space:",
+    opts:["Derivations","Equivalence classes of curves","Charts with vectors","Dual of m/m²"], ans:1,
+    exp:"Geometers define T_m M as equivalence classes of smooth curves through m." },
+  { num:66, q:"True about Möbius strip as bundle over S¹:",
+    opts:["Trivial","No non-zero sections","(0,v) ~ (1,−v)","2-dimensional total space"], ans:2,
+    exp:"The Möbius strip is built from [0,1]×ℝ by identifying (0,v) ~ (1,−v)." },
+  { num:67, q:"Kernel of constant-rank bundle map:",
+    opts:["Always trivial","Always a subbundle","Isomorphic to image","Never a subbundle"], ans:1,
+    exp:"Lemma 5.3.3: the kernel of a constant-rank bundle map is always a subbundle." },
+  { num:68, q:"Real dimension of GL_n(ℂ):",
+    opts:["n²","2n²","4n²","n² − 1"], ans:1,
+    exp:"GL_n(ℂ) has complex dimension n², hence real dimension 2n²." },
+  { num:69, q:"Regular homotopy invariant for S¹ → ℝ² immersions:",
+    opts:["Number of self-intersections","Winding number","Area","Length"], ans:1,
+    exp:"The winding number is the complete invariant of regular homotopy classes of S¹ → ℝ² immersions." },
+  { num:70, q:"Immersion means:",
+    opts:["Injective map","Surjective map","Derivative injective","Derivative surjective"], ans:2,
+    exp:"A smooth map is an immersion iff its derivative (differential) is injective at every point." },
+  { num:71, q:"PSL₂(ℤ) acts on ℍ² by:",
+    opts:["z ↦ az + b","z ↦ (az+b)/(cz+d)","(az+b)/(cz+d) with ad−bc=1","Möbius transformations modulo ±I"], ans:3,
+    exp:"PSL₂(ℤ) = SL₂(ℤ)/{±I} acts by Möbius transformations, with ±I identified." },
+  { num:72, q:"Fundamental domain for ℤ² on ℝ²:",
+    opts:["Unit disk","Unit square (0,1)²","Upper half-plane","Real line"], ans:1,
+    exp:"The unit square [0,1)² is a fundamental domain for the ℤ² lattice action on ℝ²." },
+  { num:73, q:"j-invariant maps to:",
+    opts:["ℍ²","S¹","ℂ","ℝ"], ans:2,
+    exp:"The j-invariant j : ℍ²/PSL₂(ℤ) → ℂ is a bijection onto ℂ." },
+  { num:74, q:"Diagonal map Δ : M → M × M is:",
+    opts:["Immersion","Submersion","Constant on components","Open map"], ans:0,
+    exp:"The derivative of Δ is v ↦ (v,v), which is injective, so Δ is an immersion." },
+  { num:75, q:"Tangent bundle TM has dimension:",
+    opts:["k","2k","k²","2ᵏ"], ans:1,
+    exp:"TM has dimension 2k: k from the base and k from the fibre." },
+  { num:76, q:"Which is NOT a construction of the 2-torus?",
+    opts:["S¹ × S¹","Revolution of a circle","Square with opposite edges identified","ℝ²/ℤ"], ans:3,
+    exp:"ℝ²/ℤ is a cylinder. The torus requires ℝ²/ℤ²." },
+  { num:77, q:"d_(x,y)π₁ : T_x X ⊕ T_y Y → T_x X is:",
+    opts:["Zero","Projection onto first factor","Projection onto second factor","Identity"], ans:1,
+    exp:"The derivative of the projection π₁ is projection onto the first summand of the direct sum." },
+  { num:78, q:"A smooth structure is also called:",
+    opts:["Maximal atlas","Chart","Transition function","Tangent space"], ans:0,
+    exp:"A smooth structure is a maximal smooth atlas — one that cannot be extended further." },
+  { num:79, q:"Which is compact?",
+    opts:["ℝⁿ","GL_n(ℝ)","Sⁿ","ℝPⁿ \\ {point}"], ans:2,
+    exp:"Sⁿ is compact (closed and bounded in ℝⁿ⁺¹). The others are non-compact." },
+  { num:80, q:"Algebraic geometers' tangent space:",
+    opts:["Der(E)","(m/m²)*","Equivalence classes of curves","Charts with vectors"], ans:1,
+    exp:"Algebraic geometers define T_m M as (m/m²)*, the dual of the Zariski cotangent space." },
+  { num:81, q:"If M, N are diffeomorphic, they must have:",
+    opts:["Same dimension","Same Euler characteristic","Isomorphic tangent bundles","All of the above"], ans:3,
+    exp:"Diffeomorphisms preserve all smooth invariants: dimension, Euler characteristic, and tangent bundle structure." },
+  { num:82, q:"Sphere eversion:",
+    opts:["Isotopic to identity","Regularly homotopic but not isotopic","Not regularly homotopic","Diffeomorphism of S²"], ans:1,
+    exp:"Smale's theorem: S² can be everted by regular homotopy, but not by isotopy." },
+  { num:83, q:"Dimension of moduli space for genus 2, 1 marked point:",
+    opts:["2","4","6","8"], ans:3,
+    exp:"Formula: 6g − 6 + 2n = 6(2) − 6 + 2(1) = 12 − 6 + 2 = 8." },
+  { num:84, q:"Inclusion of submanifold is:",
+    opts:["Immersion","Embedding","Both immersion and embedding","Submersion"], ans:2,
+    exp:"An inclusion of a submanifold is both an immersion (injective derivative) and an embedding (homeomorphism onto image)." },
+  { num:85, q:"Discrete subgroup of PSL₂(ℝ):",
+    opts:["PSL₂(ℤ)","PSL₂(ℚ)","PSL₂(ℂ)","None"], ans:0,
+    exp:"PSL₂(ℤ) is a discrete subgroup of PSL₂(ℝ) (the modular group)." },
+  { num:86, q:"T₀ℝᵏ dimension:",
+    opts:["0","1","k","Infinite"], ans:2,
+    exp:"The tangent space at any point of ℝᵏ has dimension k." },
+  { num:87, q:"df : TM → TN covers:",
+    opts:["f","Identity","Projection","Zero section"], ans:0,
+    exp:"df covers f: the bundle map df lies over f in the sense that π_N ∘ df = f ∘ π_M." },
+  { num:88, q:"Which is NOT a smooth invariant?",
+    opts:["Dimension","Orientability","Being a submanifold of ℝⁿ","Euler characteristic"], ans:2,
+    exp:"Being a submanifold of ℝⁿ depends on an embedding, not the intrinsic smooth structure." },
+  { num:89, q:"Canonical line bundle over ℝPⁿ fiber:",
+    opts:["Orthogonal vectors","Line spanned by x","Tangent space","ℝ"], ans:1,
+    exp:"The tautological/canonical line bundle over ℝPⁿ has fiber equal to the line [x] ⊂ ℝⁿ⁺¹ spanned by x." },
+  { num:90, q:"Transition functions of smooth vector bundle take values in:",
+    opts:["GL_k(ℝ)","ℝᵏ","O(k)","M"], ans:0,
+    exp:"Transition functions of a rank-k vector bundle take values in GL_k(ℝ)." },
+  { num:91, q:"Which is true?",
+    opts:["Every immersion is an embedding","Every embedding is an immersion","Immersions are injective","Immersions have trivial tangent bundle"], ans:1,
+    exp:"Every embedding is an immersion (injective derivative + homeomorphism onto image implies injective derivative)." },
+  { num:92, q:"ℝP² is:",
+    opts:["Orientable","Non-orientable","Diffeomorphic to S²","1-dimensional"], ans:1,
+    exp:"ℝP² is non-orientable (it contains a Möbius band)." },
+  { num:93, q:"Square with opposite edges identified vs S¹ × S¹:",
+    opts:["Homeomorphic but not diffeomorphic","Diffeomorphic","Not homotopy equivalent","One orientable, other not"], ans:1,
+    exp:"Both constructions give the same smooth manifold — the standard torus — so they are diffeomorphic." },
+  { num:94, q:"Der(E(M,m)) is:",
+    opts:["Vector space of dimension dim M","Algebra","Lie algebra","Both vector space of dim M and Lie algebra"], ans:3,
+    exp:"Der(E(M,m)) is both a dim M vector space (≅ T_m M) and a Lie algebra under commutator." },
+  { num:95, q:"Regular homotopy invariant for S¹ → ℝ²:",
+    opts:["Double points","Winding number","Crossing number","Total curvature"], ans:1,
+    exp:"The winding number classifies regular homotopy classes of immersions S¹ → ℝ²." },
+  { num:96, q:"Submersion theorem: regular level set is submanifold of dimension:",
+    opts:["dim M − dim N","dim N","0","dim M"], ans:0,
+    exp:"A regular level set of f : M → N has dimension dim M − dim N." },
+  { num:97, q:"SO(3) dimension:",
+    opts:["0","3","6","Infinite"], ans:1,
+    exp:"SO(3) = O(3) ∩ {det=1} has dimension 3(3−1)/2 = 3." },
+  { num:98, q:"Function germ:",
+    opts:["Defined on a neighbourhood","Identified if agree on some neighbourhood","Evaluation at m well-defined","All of the above"], ans:3,
+    exp:"A function germ captures all three: local domain, equivalence under agreement, and well-defined evaluation." },
+  { num:99, q:"j-invariant:",
+    opts:["Constant","Weight 12 modular form","Bijection ℍ²/PSL₂(ℤ) → ℂ","Not well-defined"], ans:2,
+    exp:"j is a bijection (actually biholomorphism) from the modular curve ℍ²/PSL₂(ℤ) to ℂ." },
+  { num:100, q:"Derivative of f × g:",
+    opts:["(v,w) ↦ (d_x f(v), 0)","(v,w) ↦ (0, d_y g(w))","(v,w) ↦ (d_x f(v), d_y g(w))","(v,w) ↦ (v,w)"], ans:2,
+    exp:"The derivative of a product map (f×g) at (x,y) applied to (v,w) gives (d_x f(v), d_y g(w))." },
+];
+
+/* ════════ STATE ════════ */
+let mode = null;
+let questions = [];
+let current = 0;
+let score = 0;
+let answered = false;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+/* ════════ START ════════ */
+function startQuiz(m) {
+  mode = m;
+  questions = shuffle(m === 'tf' ? tfQuestions : mcqQuestions);
+  current = 0; score = 0; answered = false;
+
+  document.getElementById('modeScreen').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'block';
+  document.getElementById('quizCard').style.display = 'block';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('modeLabel').textContent = m === 'tf' ? 'True / False' : 'Multiple Choice';
+
+  renderQuestion();
+}
+
+/* ════════ RENDER ════════ */
+function renderQuestion() {
+  answered = false;
+  const q = questions[current];
+  const total = questions.length;
+
+  document.getElementById('progressCount').textContent = `${current+1} / ${total}`;
+  document.getElementById('progressBar').style.width = `${(current/total)*100}%`;
+
+  const badge = document.getElementById('qTypeBadge');
+  badge.textContent = mode === 'tf' ? 'True / False' : 'Multiple Choice';
+  badge.className = 'q-type-badge' + (mode === 'mcq' ? ' mcq' : '');
+
+  document.getElementById('questionText').innerHTML =
+    `<span class="q-num">Q${q.num}.</span> ${q.q}`;
+
+  const area = document.getElementById('answersArea');
+  area.innerHTML = '';
+
+  if (mode === 'tf') {
+    area.innerHTML = `
+      <div class="tf-buttons">
+        <button class="tf-btn" onclick="checkTF(true,this)"><span class="icon">✓</span> True</button>
+        <button class="tf-btn" onclick="checkTF(false,this)"><span class="icon">✗</span> False</button>
+      </div>`;
+  } else {
+    const letters = ['A','B','C','D'];
+    const div = document.createElement('div');
+    div.className = 'mcq-options';
+    q.opts.forEach((opt,i) => {
+      const btn = document.createElement('button');
+      btn.className = 'mcq-btn';
+      btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+      btn.onclick = () => checkMCQ(i, btn);
+      div.appendChild(btn);
+    });
+    area.appendChild(div);
+  }
+
+  document.getElementById('explanation').className = 'explanation';
+  document.getElementById('explanation').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+}
+
+/* ════════ CHECK TF ════════ */
+function checkTF(chosen, btn) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const btns = document.querySelectorAll('.tf-btn');
+  btns.forEach(b => b.disabled = true);
+
+  if (chosen === q.answer) { btn.classList.add('btn-correct'); score++; }
+  else {
+    btn.classList.add('btn-wrong');
+    btns.forEach(b => {
+      const isTrue = b.textContent.includes('True');
+      if ((isTrue && q.answer===true) || (!isTrue && q.answer===false))
+        b.classList.add('btn-correct');
+    });
+  }
+  showExplanation(q.exp);
+}
+
+/* ════════ CHECK MCQ ════════ */
+function checkMCQ(chosen, btn) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const btns = document.querySelectorAll('.mcq-btn');
+  btns.forEach(b => b.disabled = true);
+
+  if (chosen === q.ans) {
+    btn.classList.add('btn-correct');
+    btn.querySelector('.option-letter').style.color = 'var(--correct)';
+    score++;
+  } else {
+    btn.classList.add('btn-wrong');
+    btn.querySelector('.option-letter').style.color = 'var(--wrong)';
+    btns[q.ans].classList.add('btn-correct');
+    btns[q.ans].querySelector('.option-letter').style.color = 'var(--correct)';
+  }
+  showExplanation(q.exp);
+}
+
+function showExplanation(text) {
+  const el = document.getElementById('explanation');
+  el.innerHTML = `<strong>Explanation:</strong> ${text}`;
+  el.classList.add('show');
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+/* ════════ NEXT ════════ */
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) { showResults(); return; }
+  const card = document.getElementById('quizCard');
+  card.style.animation = 'none'; card.offsetHeight;
+  card.style.animation = 'fadeUp .4s ease both';
+  renderQuestion();
+}
+
+/* ════════ RESULTS ════════ */
+function showResults() {
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+  const pct = Math.round((score/questions.length)*100);
+  const res = document.getElementById('results');
+  res.style.display = 'block';
+
+  document.getElementById('scoreNumber').innerHTML = `${pct}<span>%</span>`;
+  document.getElementById('statCorrect').textContent = score;
+  document.getElementById('statWrong').textContent = questions.length - score;
+  document.getElementById('statTotal').textContent = questions.length;
+
+  const circ = 2*Math.PI*55;
+  const offset = circ - (pct/100)*circ;
+  const ring = document.getElementById('ringFill');
+  ring.style.strokeDasharray = circ;
+  ring.style.strokeDashoffset = circ;
+  setTimeout(() => {
+    ring.style.strokeDashoffset = offset;
+    ring.style.stroke = pct>=80?'var(--correct)': pct>=50?'var(--gold)':'var(--wrong)';
+  }, 100);
+
+  const titles = [[100,"Perfect Score! 🏆","Exceptional mastery of differential topology."],
+                  [80, "Excellent Work! ✦","Strong understanding of the material."],
+                  [60, "Good Effort! ◈","Review the missed questions and try again."],
+                  [40, "Keep Studying ◇","More revision needed — you can do it!"],
+                  [0,  "Keep Practicing ○","Go back to the notes and try again."]];
+  const [,title,sub] = titles.find(([t])=>pct>=t);
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultSubtitle').textContent = sub;
+}
+
+function retryQuiz() {
+  document.getElementById('results').style.display = 'none';
+  startQuiz(mode);
+}
+function goHome() {
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('modeScreen').style.display = 'block';
+}
+</script>
+</body>
+</html>
