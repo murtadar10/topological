@@ -431,6 +431,7 @@ body::before {
       <div class="logo-badge"><span class="dot"></span>مادة التوبولوجيا</div>
       <h1 class="main-title">اختبار التوبولوجيا</h1>
       <p class="sub-title">اختر نوع الاختبار وابدأ المراجعة</p>
+      <p class="sub-title">لا تنسوني من صالح دعائكم (ابو الروض)</p>
     </div>
 
     <div class="mode-grid">
@@ -766,11 +767,11 @@ function showResults() {
   arc.style.strokeDashoffset = circ;
 
   let emoji, title, sub, color;
-  if (pct === 100) { emoji='🏆'; title='نتيجة مثالية!'; sub='أداء استثنائي، أتقنت المادة تماماً'; color='#10b981'; }
-  else if (pct>=80){ emoji='🌟'; title='ممتاز جداً!'; sub='فهم قوي للمادة، استمر هكذا'; color='#10b981'; }
+  if (pct === 100) { emoji='🏆'; title='نتيجة مثالية!'; sub='شنو انت , مهكر المادة ,نام وانت مرتاح '; color='#10b981'; }
+  else if (pct>=80){ emoji='🌟'; title='ممتاز جداً!'; sub='عاشت ايدك ,بطل ,استمر '; color='#10b981'; }
   else if (pct>=60){ emoji='👍'; title='جيد!'; sub='مستوى جيد، راجع الأسئلة الخاطئة'; color='#f59e0b'; }
-  else if (pct>=40){ emoji='📚'; title='تحتاج مراجعة'; sub='عد إلى المادة وحاول من جديد'; color='#f59e0b'; }
-  else             { emoji='💪'; title='لا تيأس!'; sub='المثابرة هي مفتاح النجاح'; color='#ef4444'; }
+  else if (pct>=40){ emoji='📚'; title='تحتاج مراجعة'; sub='موخوش درجة '; color='#f59e0b'; }
+  else             { emoji='💪'; title='بس لا تيأس!'; sub='سختجي كوم اقرة هذا فاينل '; color='#ef4444'; }
 
   arc.style.stroke = color;
   document.getElementById('resEmoji').textContent = emoji;
