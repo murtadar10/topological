@@ -1,795 +1,1307 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>اختبار التوبولوجيا</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg: #0b0f1a;
-  --surface: #111827;
-  --surface2: #1a2235;
-  --border: #1e2d45;
-  --teal: #0ea5c9;
-  --teal-dim: rgba(14,165,201,0.12);
-  --amber: #f59e0b;
-  --amber-dim: rgba(245,158,11,0.12);
-  --green: #10b981;
-  --green-dim: rgba(16,185,129,0.12);
-  --red: #ef4444;
-  --red-dim: rgba(239,68,68,0.12);
-  --text: #e2e8f0;
-  --text-muted: #64748b;
-  --text-soft: #94a3b8;
-}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>اختبار التوبولوجيا</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0b0f1a;
+        --surface: #111827;
+        --surface2: #1a2235;
+        --border: #1e2d45;
+        --teal: #0ea5c9;
+        --teal-dim: rgba(14, 165, 201, 0.12);
+        --amber: #f59e0b;
+        --amber-dim: rgba(245, 158, 11, 0.12);
+        --green: #10b981;
+        --green-dim: rgba(16, 185, 129, 0.12);
+        --red: #ef4444;
+        --red-dim: rgba(239, 68, 68, 0.12);
+        --text: #e2e8f0;
+        --text-muted: #64748b;
+        --text-soft: #94a3b8;
+      }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-body {
-  background: var(--bg);
-  background-image:
-    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(14,165,201,0.07), transparent),
-    radial-gradient(ellipse 50% 40% at 90% 80%, rgba(245,158,11,0.05), transparent);
-  font-family: 'Tajawal', sans-serif;
-  color: var(--text);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  overflow-x: hidden;
-}
+      body {
+        background: var(--bg);
+        background-image:
+          radial-gradient(
+            ellipse 80% 60% at 50% -10%,
+            rgba(14, 165, 201, 0.07),
+            transparent
+          ),
+          radial-gradient(
+            ellipse 50% 40% at 90% 80%,
+            rgba(245, 158, 11, 0.05),
+            transparent
+          );
+        font-family: "Tajawal", sans-serif;
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        overflow-x: hidden;
+      }
 
-/* ─── GRID TEXTURE ─── */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(14,165,201,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(14,165,201,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  z-index: 0;
-}
+      /* ─── GRID TEXTURE ─── */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(14, 165, 201, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(14, 165, 201, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        pointer-events: none;
+        z-index: 0;
+      }
 
-.wrap { width: 100%; max-width: 720px; position: relative; z-index: 1; }
+      .wrap {
+        width: 100%;
+        max-width: 720px;
+        position: relative;
+        z-index: 1;
+      }
 
-/* ─── HOME SCREEN ─── */
-#homeScreen { animation: slideUp .6s ease both; }
+      /* ─── HOME SCREEN ─── */
+      #homeScreen {
+        animation: slideUp 0.6s ease both;
+      }
 
-.logo-area { text-align: center; margin-bottom: 52px; }
-.logo-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  border: 1px solid rgba(14,165,201,0.3);
-  background: rgba(14,165,201,0.06);
-  padding: 6px 18px; border-radius: 99px;
-  font-size: 12px; letter-spacing: 2px;
-  color: var(--teal); margin-bottom: 20px;
-  text-transform: uppercase;
-}
-.logo-badge .dot {
-  width: 6px; height: 6px; background: var(--teal);
-  border-radius: 50%; animation: pulse 2s infinite;
-}
-@keyframes pulse {
-  0%,100% { opacity:1; transform:scale(1); }
-  50% { opacity:.4; transform:scale(.7); }
-}
-.main-title {
-  font-family: 'Amiri', serif;
-  font-size: clamp(36px, 6vw, 58px);
-  font-weight: 700;
-  line-height: 1.15;
-  background: linear-gradient(135deg, #e2e8f0 30%, var(--teal));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  margin-bottom: 10px;
-}
-.sub-title { color: var(--text-soft); font-size: 15px; font-weight: 300; }
+      .logo-area {
+        text-align: center;
+        margin-bottom: 52px;
+      }
+      .logo-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid rgba(14, 165, 201, 0.3);
+        background: rgba(14, 165, 201, 0.06);
+        padding: 6px 18px;
+        border-radius: 99px;
+        font-size: 12px;
+        letter-spacing: 2px;
+        color: var(--teal);
+        margin-bottom: 20px;
+        text-transform: uppercase;
+      }
+      .logo-badge .dot {
+        width: 6px;
+        height: 6px;
+        background: var(--teal);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.4;
+          transform: scale(0.7);
+        }
+      }
+      .main-title {
+        font-family: "Amiri", serif;
+        font-size: clamp(36px, 6vw, 58px);
+        font-weight: 700;
+        line-height: 1.15;
+        background: linear-gradient(135deg, #e2e8f0 30%, var(--teal));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 10px;
+      }
+      .sub-title {
+        color: var(--text-soft);
+        font-size: 15px;
+        font-weight: 300;
+      }
 
-/* ─── MODE CARDS ─── */
-.mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.mode-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 32px 24px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
-}
-.mode-card::before {
-  content: '';
-  position: absolute;
-  top: -50%; left: -50%;
-  width: 200%; height: 200%;
-  background: conic-gradient(from 0deg, transparent 0%, var(--c) 10%, transparent 20%);
-  opacity: 0;
-  transition: opacity .4s ease;
-  animation: spin 6s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.mode-card:hover::before { opacity: .04; }
-.mode-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--c);
-  box-shadow: 0 0 30px -5px var(--c);
-}
-.mode-card.teal { --c: var(--teal); }
-.mode-card.amber { --c: var(--amber); }
+      /* ─── MODE CARDS ─── */
+      .mode-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .mode-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 32px 24px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition:
+          transform 0.3s ease,
+          border-color 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+      .mode-card::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: conic-gradient(
+          from 0deg,
+          transparent 0%,
+          var(--c) 10%,
+          transparent 20%
+        );
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        animation: spin 6s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .mode-card:hover::before {
+        opacity: 0.04;
+      }
+      .mode-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--c);
+        box-shadow: 0 0 30px -5px var(--c);
+      }
+      .mode-card.teal {
+        --c: var(--teal);
+      }
+      .mode-card.amber {
+        --c: var(--amber);
+      }
 
-.card-icon {
-  width: 52px; height: 52px;
-  border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 24px;
-  margin-bottom: 18px;
-}
-.teal .card-icon { background: var(--teal-dim); }
-.amber .card-icon { background: var(--amber-dim); }
+      .card-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-bottom: 18px;
+      }
+      .teal .card-icon {
+        background: var(--teal-dim);
+      }
+      .amber .card-icon {
+        background: var(--amber-dim);
+      }
 
-.card-title {
-  font-size: 20px; font-weight: 700;
-  margin-bottom: 8px;
-}
-.teal .card-title { color: var(--teal); }
-.amber .card-title { color: var(--amber); }
+      .card-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .teal .card-title {
+        color: var(--teal);
+      }
+      .amber .card-title {
+        color: var(--amber);
+      }
 
-.card-desc { color: var(--text-soft); font-size: 13px; line-height: 1.7; margin-bottom: 16px; }
+      .card-desc {
+        color: var(--text-soft);
+        font-size: 13px;
+        line-height: 1.7;
+        margin-bottom: 16px;
+      }
 
-.card-badge {
-  display: inline-block;
-  padding: 3px 12px; border-radius: 99px;
-  font-size: 12px; font-weight: 500;
-}
-.teal .card-badge { background: var(--teal-dim); color: var(--teal); border: 1px solid rgba(14,165,201,0.2); }
-.amber .card-badge { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
+      .card-badge {
+        display: inline-block;
+        padding: 3px 12px;
+        border-radius: 99px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+      .teal .card-badge {
+        background: var(--teal-dim);
+        color: var(--teal);
+        border: 1px solid rgba(14, 165, 201, 0.2);
+      }
+      .amber .card-badge {
+        background: var(--amber-dim);
+        color: var(--amber);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+      }
 
-/* ─── STATS ROW ─── */
-.stats-row {
-  display: grid; grid-template-columns: repeat(3,1fr);
-  gap: 12px; margin-top: 24px;
-}
-.stat-box {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px 12px;
-  text-align: center;
-}
-.stat-num {
-  font-family: 'Amiri', serif;
-  font-size: 28px; font-weight: 700;
-  background: linear-gradient(135deg, var(--teal), var(--amber));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-.stat-lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; letter-spacing: .5px; }
+      /* ─── STATS ROW ─── */
+      .stats-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-top: 24px;
+      }
+      .stat-box {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px 12px;
+        text-align: center;
+      }
+      .stat-num {
+        font-family: "Amiri", serif;
+        font-size: 28px;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--teal), var(--amber));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .stat-lbl {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 2px;
+        letter-spacing: 0.5px;
+      }
 
-/* ─── QUIZ SCREEN ─── */
-#quizScreen { display: none; animation: slideUp .5s ease both; }
+      /* ─── QUIZ SCREEN ─── */
+      #quizScreen {
+        display: none;
+        animation: slideUp 0.5s ease both;
+      }
 
-/* ─── TOP BAR ─── */
-.top-bar {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 24px;
-}
-.back-btn {
-  display: flex; align-items: center; gap: 6px;
-  background: var(--surface); border: 1px solid var(--border);
-  color: var(--text-soft); font-family: 'Tajawal',sans-serif;
-  font-size: 13px; padding: 7px 14px; border-radius: 8px;
-  cursor: pointer; transition: all .2s;
-}
-.back-btn:hover { border-color: var(--teal); color: var(--teal); }
+      /* ─── TOP BAR ─── */
+      .top-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+      }
+      .back-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text-soft);
+        font-family: "Tajawal", sans-serif;
+        font-size: 13px;
+        padding: 7px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .back-btn:hover {
+        border-color: var(--teal);
+        color: var(--teal);
+      }
 
-.q-counter {
-  font-family: 'Amiri', serif; font-size: 18px;
-  color: var(--text-soft);
-}
-.q-counter span { color: var(--text); font-weight: 700; font-size: 22px; }
+      .q-counter {
+        font-family: "Amiri", serif;
+        font-size: 18px;
+        color: var(--text-soft);
+      }
+      .q-counter span {
+        color: var(--text);
+        font-weight: 700;
+        font-size: 22px;
+      }
 
-.score-chip {
-  background: var(--green-dim); border: 1px solid rgba(16,185,129,0.2);
-  color: var(--green); padding: 5px 14px; border-radius: 99px; font-size: 13px;
-}
+      .score-chip {
+        background: var(--green-dim);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        color: var(--green);
+        padding: 5px 14px;
+        border-radius: 99px;
+        font-size: 13px;
+      }
 
-/* ─── PROGRESS ─── */
-.prog-track {
-  height: 3px; background: var(--border); border-radius: 99px;
-  margin-bottom: 28px; overflow: hidden;
-}
-.prog-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--teal), var(--amber));
-  border-radius: 99px;
-  transition: width .5s cubic-bezier(.4,0,.2,1);
-}
+      /* ─── PROGRESS ─── */
+      .prog-track {
+        height: 3px;
+        background: var(--border);
+        border-radius: 99px;
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .prog-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--teal), var(--amber));
+        border-radius: 99px;
+        transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      }
 
-/* ─── QUESTION CARD ─── */
-.q-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 36px 32px;
-  position: relative;
-  overflow: hidden;
-}
-.q-card::after {
-  content: '';
-  position: absolute;
-  top: 0; right: 0; left: 0; height: 2px;
-  background: linear-gradient(90deg, var(--teal), var(--amber));
-  border-radius: 20px 20px 0 0;
-}
-.q-type-tag {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 4px 12px; border-radius: 99px;
-  font-size: 11px; font-weight: 500; letter-spacing: 1px;
-  margin-bottom: 18px;
-}
-.tag-tf  { background: var(--teal-dim);  color: var(--teal);  border: 1px solid rgba(14,165,201,.2); }
-.tag-fill { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,.2); }
+      /* ─── QUESTION CARD ─── */
+      .q-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 36px 32px;
+        position: relative;
+        overflow: hidden;
+      }
+      .q-card::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--teal), var(--amber));
+        border-radius: 20px 20px 0 0;
+      }
+      .q-type-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 12px;
+        border-radius: 99px;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 1px;
+        margin-bottom: 18px;
+      }
+      .tag-tf {
+        background: var(--teal-dim);
+        color: var(--teal);
+        border: 1px solid rgba(14, 165, 201, 0.2);
+      }
+      .tag-fill {
+        background: var(--amber-dim);
+        color: var(--amber);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+      }
 
-.q-text {
-  font-family: 'Amiri', serif;
-  font-size: clamp(16px,2.5vw,20px);
-  line-height: 1.9;
-  color: var(--text);
-  margin-bottom: 28px;
-}
+      .q-text {
+        font-family: "Amiri", serif;
+        font-size: clamp(16px, 2.5vw, 20px);
+        line-height: 1.9;
+        color: var(--text);
+        margin-bottom: 28px;
+      }
 
-/* ─── TRUE / FALSE BUTTONS ─── */
-.tf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.tf-btn {
-  padding: 20px 16px;
-  border-radius: 14px;
-  border: 1.5px solid var(--border);
-  background: var(--surface2);
-  cursor: pointer;
-  font-family: 'Tajawal', sans-serif;
-  font-size: 18px; font-weight: 700;
-  color: var(--text);
-  transition: all .25s ease;
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-}
-.tf-btn:hover:not(:disabled) {
-  transform: translateY(-3px);
-}
-.btn-true:hover:not(:disabled)  { border-color: var(--green); background: var(--green-dim); color: var(--green); box-shadow: 0 8px 24px -4px rgba(16,185,129,.2); }
-.btn-false:hover:not(:disabled) { border-color: var(--red);   background: var(--red-dim);   color: var(--red);   box-shadow: 0 8px 24px -4px rgba(239,68,68,.2); }
-.tf-btn.is-correct { border-color: var(--green) !important; background: var(--green-dim) !important; color: var(--green) !important; }
-.tf-btn.is-wrong   { border-color: var(--red)   !important; background: var(--red-dim)   !important; color: var(--red)   !important; }
+      /* ─── TRUE / FALSE BUTTONS ─── */
+      .tf-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .tf-btn {
+        padding: 20px 16px;
+        border-radius: 14px;
+        border: 1.5px solid var(--border);
+        background: var(--surface2);
+        cursor: pointer;
+        font-family: "Tajawal", sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text);
+        transition: all 0.25s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+      .tf-btn:hover:not(:disabled) {
+        transform: translateY(-3px);
+      }
+      .btn-true:hover:not(:disabled) {
+        border-color: var(--green);
+        background: var(--green-dim);
+        color: var(--green);
+        box-shadow: 0 8px 24px -4px rgba(16, 185, 129, 0.2);
+      }
+      .btn-false:hover:not(:disabled) {
+        border-color: var(--red);
+        background: var(--red-dim);
+        color: var(--red);
+        box-shadow: 0 8px 24px -4px rgba(239, 68, 68, 0.2);
+      }
+      .tf-btn.is-correct {
+        border-color: var(--green) !important;
+        background: var(--green-dim) !important;
+        color: var(--green) !important;
+      }
+      .tf-btn.is-wrong {
+        border-color: var(--red) !important;
+        background: var(--red-dim) !important;
+        color: var(--red) !important;
+      }
 
-/* ─── FILL IN THE BLANK ─── */
-.fill-area { display: flex; flex-direction: column; gap: 10px; }
-.fill-input-wrap { position: relative; }
-.fill-input {
-  width: 100%;
-  background: var(--surface2);
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 18px;
-  font-family: 'Tajawal', sans-serif;
-  font-size: 16px;
-  color: var(--text);
-  outline: none;
-  transition: border-color .2s, box-shadow .2s;
-  text-align: right;
-}
-.fill-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(14,165,201,.1); }
-.fill-input.correct { border-color: var(--green) !important; background: var(--green-dim) !important; }
-.fill-input.wrong   { border-color: var(--red)   !important; background: var(--red-dim)   !important; }
-.fill-hint { font-size: 12px; color: var(--text-muted); text-align: left; margin-top: 4px; }
+      /* ─── MULTIPLE CHOICE ─── */
+      .choice-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .choice-btn {
+        width: 100%;
+        background: var(--surface2);
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 15px 18px;
+        font-family: "Tajawal", sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text);
+        text-align: right;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          border-color 0.2s,
+          background 0.2s,
+          color 0.2s;
+      }
+      .choice-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        border-color: var(--amber);
+        background: var(--amber-dim);
+        color: var(--amber);
+      }
+      .choice-btn.is-correct {
+        border-color: var(--green) !important;
+        background: var(--green-dim) !important;
+        color: var(--green) !important;
+      }
+      .choice-btn.is-wrong {
+        border-color: var(--red) !important;
+        background: var(--red-dim) !important;
+        color: var(--red) !important;
+      }
 
-.check-btn {
-  width: 100%;
-  padding: 16px;
-  border-radius: 12px;
-  border: none;
-  background: linear-gradient(135deg, var(--teal), #0284c7);
-  color: white;
-  font-family: 'Tajawal', sans-serif;
-  font-size: 16px; font-weight: 700;
-  cursor: pointer;
-  margin-top: 8px;
-  transition: opacity .2s, transform .2s;
-}
-.check-btn:hover { opacity: .9; transform: translateY(-1px); }
-.check-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+      /* ─── EXPLANATION ─── */
+      .explanation {
+        margin-top: 18px;
+        padding: 16px 18px;
+        background: var(--surface2);
+        border-radius: 12px;
+        border-right: 3px solid var(--amber);
+        font-size: 14px;
+        line-height: 1.8;
+        color: var(--text-soft);
+        display: none;
+        animation: slideUp 0.3s ease both;
+      }
+      .explanation.show {
+        display: block;
+      }
+      .explanation strong {
+        color: var(--amber);
+      }
 
-/* ─── EXPLANATION ─── */
-.explanation {
-  margin-top: 18px;
-  padding: 16px 18px;
-  background: var(--surface2);
-  border-radius: 12px;
-  border-right: 3px solid var(--amber);
-  font-size: 14px;
-  line-height: 1.8;
-  color: var(--text-soft);
-  display: none;
-  animation: slideUp .3s ease both;
-}
-.explanation.show { display: block; }
-.explanation strong { color: var(--amber); }
+      /* ─── NEXT BTN ─── */
+      .next-btn {
+        width: 100%;
+        padding: 16px;
+        border-radius: 12px;
+        border: 1.5px solid var(--teal);
+        background: transparent;
+        color: var(--teal);
+        font-family: "Tajawal", sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 14px;
+        transition: all 0.25s;
+        display: none;
+        letter-spacing: 0.5px;
+      }
+      .next-btn.show {
+        display: block;
+      }
+      .next-btn:hover {
+        background: var(--teal);
+        color: var(--bg);
+      }
 
-/* ─── NEXT BTN ─── */
-.next-btn {
-  width: 100%;
-  padding: 16px;
-  border-radius: 12px;
-  border: 1.5px solid var(--teal);
-  background: transparent;
-  color: var(--teal);
-  font-family: 'Tajawal', sans-serif;
-  font-size: 15px; font-weight: 700;
-  cursor: pointer;
-  margin-top: 14px;
-  transition: all .25s;
-  display: none;
-  letter-spacing: .5px;
-}
-.next-btn.show { display: block; }
-.next-btn:hover { background: var(--teal); color: var(--bg); }
+      /* ─── RESULT SCREEN ─── */
+      #resultScreen {
+        display: none;
+        animation: slideUp 0.6s ease both;
+      }
+      .result-hero {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 44px 36px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .result-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          ellipse 60% 40% at 50% 0%,
+          rgba(14, 165, 201, 0.06),
+          transparent
+        );
+        pointer-events: none;
+      }
+      .result-emoji {
+        font-size: 56px;
+        margin-bottom: 16px;
+        display: block;
+      }
+      .result-title {
+        font-family: "Amiri", serif;
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .result-sub {
+        color: var(--text-soft);
+        font-size: 15px;
+        margin-bottom: 36px;
+      }
 
-/* ─── RESULT SCREEN ─── */
-#resultScreen {
-  display: none;
-  animation: slideUp .6s ease both;
-}
-.result-hero {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 44px 36px;
-  text-align: center;
-  position: relative; overflow: hidden;
-}
-.result-hero::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(14,165,201,0.06), transparent);
-  pointer-events: none;
-}
-.result-emoji { font-size: 56px; margin-bottom: 16px; display: block; }
-.result-title {
-  font-family: 'Amiri', serif;
-  font-size: 32px; font-weight: 700;
-  margin-bottom: 6px;
-}
-.result-sub { color: var(--text-soft); font-size: 15px; margin-bottom: 36px; }
+      .ring-wrap {
+        width: 130px;
+        height: 130px;
+        margin: 0 auto 32px;
+        position: relative;
+      }
+      .ring-wrap svg {
+        transform: rotate(-90deg);
+      }
+      .ring-bg {
+        fill: none;
+        stroke: var(--border);
+        stroke-width: 9;
+      }
+      .ring-arc {
+        fill: none;
+        stroke-width: 9;
+        stroke-linecap: round;
+        stroke-dasharray: 351;
+        stroke-dashoffset: 351;
+        transition: stroke-dashoffset 1.3s cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
+      }
+      .ring-pct {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-family: "Amiri", serif;
+        font-size: 30px;
+        font-weight: 700;
+      }
+      .ring-pct small {
+        font-size: 14px;
+        color: var(--text-muted);
+      }
 
-.ring-wrap {
-  width: 130px; height: 130px;
-  margin: 0 auto 32px;
-  position: relative;
-}
-.ring-wrap svg { transform: rotate(-90deg); }
-.ring-bg  { fill: none; stroke: var(--border); stroke-width: 9; }
-.ring-arc { fill: none; stroke-width: 9; stroke-linecap: round;
-  stroke-dasharray: 351; stroke-dashoffset: 351;
-  transition: stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1) .3s; }
-.ring-pct {
-  position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: 'Amiri', serif;
-  font-size: 30px; font-weight: 700;
-}
-.ring-pct small { font-size: 14px; color: var(--text-muted); }
+      .res-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        background: var(--border);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        overflow: hidden;
+        margin-bottom: 28px;
+      }
+      .res-stat {
+        background: var(--surface2);
+        padding: 18px 8px;
+      }
+      .res-stat-n {
+        font-family: "Amiri", serif;
+        font-size: 26px;
+        font-weight: 700;
+      }
+      .res-stat-n.g {
+        color: var(--green);
+      }
+      .res-stat-n.r {
+        color: var(--red);
+      }
+      .res-stat-n.b {
+        color: var(--teal);
+      }
+      .res-stat-l {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 2px;
+        letter-spacing: 0.5px;
+      }
 
-.res-stats {
-  display: grid; grid-template-columns: repeat(3,1fr);
-  gap: 1px; background: var(--border);
-  border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
-  margin-bottom: 28px;
-}
-.res-stat { background: var(--surface2); padding: 18px 8px; }
-.res-stat-n {
-  font-family: 'Amiri', serif; font-size: 26px; font-weight: 700;
-}
-.res-stat-n.g { color: var(--green); }
-.res-stat-n.r { color: var(--red); }
-.res-stat-n.b { color: var(--teal); }
-.res-stat-l { font-size: 11px; color: var(--text-muted); margin-top: 2px; letter-spacing: .5px; }
+      .res-btns {
+        display: flex;
+        gap: 12px;
+      }
+      .res-btn {
+        flex: 1;
+        padding: 14px;
+        border-radius: 12px;
+        font-family: "Tajawal", sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .res-btn.primary {
+        background: linear-gradient(135deg, var(--teal), #0284c7);
+        border: none;
+        color: white;
+      }
+      .res-btn.primary:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+      }
+      .res-btn.ghost {
+        background: transparent;
+        border: 1.5px solid var(--border);
+        color: var(--text-soft);
+      }
+      .res-btn.ghost:hover {
+        border-color: var(--text-soft);
+        color: var(--text);
+      }
 
-.res-btns { display: flex; gap: 12px; }
-.res-btn {
-  flex: 1; padding: 14px;
-  border-radius: 12px;
-  font-family: 'Tajawal', sans-serif;
-  font-size: 15px; font-weight: 700;
-  cursor: pointer;
-  transition: all .2s;
-}
-.res-btn.primary { background: linear-gradient(135deg, var(--teal), #0284c7); border: none; color: white; }
-.res-btn.primary:hover { opacity: .9; transform: translateY(-2px); }
-.res-btn.ghost { background: transparent; border: 1.5px solid var(--border); color: var(--text-soft); }
-.res-btn.ghost:hover { border-color: var(--text-soft); color: var(--text); }
+      /* ─── ANIMATIONS ─── */
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(22px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-/* ─── ANIMATIONS ─── */
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(22px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+      /* ─── RESPONSIVE ─── */
+      @media (max-width: 500px) {
+        .mode-grid {
+          grid-template-columns: 1fr;
+        }
+        .q-card {
+          padding: 24px 18px;
+        }
+        .tf-row {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <!-- ══════ HOME SCREEN ══════ -->
+      <div id="homeScreen">
+        <div class="logo-area">
+          <div class="logo-badge">
+            <span class="dot"></span>مادة التوبولوجيا
+          </div>
+          <h1 class="main-title">اختبار التوبولوجيا</h1>
+          <p class="sub-title">اختر نوع الاختبار وابدأ المراجعة</p>
+          <p class="sub-title">لا تنسوني من صالح دعائكم (ابو الروض)</p>
+        </div>
 
-/* ─── RESPONSIVE ─── */
-@media(max-width:500px){
-  .mode-grid { grid-template-columns: 1fr; }
-  .q-card { padding: 24px 18px; }
-  .tf-row { grid-template-columns: 1fr 1fr; }
-}
-</style>
-</head>
-<body>
-<div class="wrap">
+        <div class="mode-grid">
+          <div class="mode-card teal" onclick="startQuiz('tf')">
+            <div class="card-icon">✓✗</div>
+            <div class="card-title">صح وخطأ</div>
+            <p class="card-desc">
+              اختبر معرفتك بالتعريفات والنظريات والخصائص التوبولوجية
+            </p>
+            <span class="card-badge">34 سؤالاً</span>
+          </div>
+          <div class="mode-card amber" onclick="startQuiz('fill')">
+            <div class="card-icon">✎</div>
+            <div class="card-title">اختيار من متعدد</div>
+            <p class="card-desc">
+              اختر المصطلح الصحيح لإكمال الجمل وتثبيت الفهم
+            </p>
+            <span class="card-badge">10 أسئلة</span>
+          </div>
+        </div>
 
-  <!-- ══════ HOME SCREEN ══════ -->
-  <div id="homeScreen">
-    <div class="logo-area">
-      <div class="logo-badge"><span class="dot"></span>مادة التوبولوجيا</div>
-      <h1 class="main-title">اختبار التوبولوجيا</h1>
-      <p class="sub-title">اختر نوع الاختبار وابدأ المراجعة</p>
-      <p class="sub-title">لا تنسوني من صالح دعائكم (ابو الروض)</p>
-    </div>
-
-    <div class="mode-grid">
-      <div class="mode-card teal" onclick="startQuiz('tf')">
-        <div class="card-icon">✓✗</div>
-        <div class="card-title">صح وخطأ</div>
-        <p class="card-desc">اختبر معرفتك بالتعريفات والنظريات والخصائص التوبولوجية</p>
-        <span class="card-badge">34 سؤالاً</span>
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-num">44</div>
+            <div class="stat-lbl">مجموع الأسئلة</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">2</div>
+            <div class="stat-lbl">نوع الاختبار</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">∞</div>
+            <div class="stat-lbl">محاولات</div>
+          </div>
+        </div>
       </div>
-      <div class="mode-card amber" onclick="startQuiz('fill')">
-        <div class="card-icon">✎</div>
-        <div class="card-title">ملء الفراغات</div>
-        <p class="card-desc">أكمل الجمل بالمصطلحات الصحيحة واثبت فهمك العميق</p>
-        <span class="card-badge">10 أسئلة</span>
+
+      <!-- ══════ QUIZ SCREEN ══════ -->
+      <div id="quizScreen">
+        <div class="top-bar">
+          <button class="back-btn" onclick="goHome()">← الرئيسية</button>
+          <div class="q-counter">
+            سؤال <span id="qNum">1</span> / <span id="qTotal">34</span>
+          </div>
+          <div class="score-chip">✓ <span id="scoreDisp">0</span></div>
+        </div>
+        <div class="prog-track">
+          <div class="prog-fill" id="progFill" style="width: 0%"></div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-type-tag" id="qTag">صح / خطأ</div>
+          <p class="q-text" id="qText"></p>
+          <div id="answersArea"></div>
+          <div class="explanation" id="explanation"></div>
+          <button class="next-btn" id="nextBtn" onclick="nextQ()">
+            السؤال التالي ←
+          </button>
+        </div>
+      </div>
+
+      <!-- ══════ RESULT SCREEN ══════ -->
+      <div id="resultScreen">
+        <div class="result-hero">
+          <span class="result-emoji" id="resEmoji">🎉</span>
+          <div class="ring-wrap">
+            <svg width="130" height="130" viewBox="0 0 130 130">
+              <circle class="ring-bg" cx="65" cy="65" r="56" />
+              <circle class="ring-arc" id="ringArc" cx="65" cy="65" r="56" />
+            </svg>
+            <div class="ring-pct" id="ringPct">0<small>%</small></div>
+          </div>
+          <div class="result-title" id="resTitle"></div>
+          <div class="result-sub" id="resSub"></div>
+          <div class="res-stats">
+            <div class="res-stat">
+              <div class="res-stat-n g" id="resCorrect">0</div>
+              <div class="res-stat-l">صحيح</div>
+            </div>
+            <div class="res-stat">
+              <div class="res-stat-n r" id="resWrong">0</div>
+              <div class="res-stat-l">خطأ</div>
+            </div>
+            <div class="res-stat">
+              <div class="res-stat-n b" id="resTotal">0</div>
+              <div class="res-stat-l">المجموع</div>
+            </div>
+          </div>
+          <div class="res-btns">
+            <button class="res-btn primary" onclick="retryQuiz()">
+              إعادة المحاولة
+            </button>
+            <button class="res-btn ghost" onclick="goHome()">
+              تغيير النوع
+            </button>
+          </div>
+        </div>
       </div>
     </div>
+    <!-- /wrap -->
 
-    <div class="stats-row">
-      <div class="stat-box"><div class="stat-num">44</div><div class="stat-lbl">مجموع الأسئلة</div></div>
-      <div class="stat-box"><div class="stat-num">2</div><div class="stat-lbl">نوع الاختبار</div></div>
-      <div class="stat-box"><div class="stat-num">∞</div><div class="stat-lbl">محاولات</div></div>
-    </div>
-  </div>
-
-  <!-- ══════ QUIZ SCREEN ══════ -->
-  <div id="quizScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="goHome()">← الرئيسية</button>
-      <div class="q-counter">سؤال <span id="qNum">1</span> / <span id="qTotal">34</span></div>
-      <div class="score-chip">✓ <span id="scoreDisp">0</span></div>
-    </div>
-    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
-
-    <div class="q-card">
-      <div class="q-type-tag" id="qTag">صح / خطأ</div>
-      <p class="q-text" id="qText"></p>
-      <div id="answersArea"></div>
-      <div class="explanation" id="explanation"></div>
-      <button class="next-btn" id="nextBtn" onclick="nextQ()">السؤال التالي ←</button>
-    </div>
-  </div>
-
-  <!-- ══════ RESULT SCREEN ══════ -->
-  <div id="resultScreen">
-    <div class="result-hero">
-      <span class="result-emoji" id="resEmoji">🎉</span>
-      <div class="ring-wrap">
-        <svg width="130" height="130" viewBox="0 0 130 130">
-          <circle class="ring-bg" cx="65" cy="65" r="56"/>
-          <circle class="ring-arc" id="ringArc" cx="65" cy="65" r="56"/>
-        </svg>
-        <div class="ring-pct" id="ringPct">0<small>%</small></div>
-      </div>
-      <div class="result-title" id="resTitle"></div>
-      <div class="result-sub" id="resSub"></div>
-      <div class="res-stats">
-        <div class="res-stat"><div class="res-stat-n g" id="resCorrect">0</div><div class="res-stat-l">صحيح</div></div>
-        <div class="res-stat"><div class="res-stat-n r" id="resWrong">0</div><div class="res-stat-l">خطأ</div></div>
-        <div class="res-stat"><div class="res-stat-n b" id="resTotal">0</div><div class="res-stat-l">المجموع</div></div>
-      </div>
-      <div class="res-btns">
-        <button class="res-btn primary" onclick="retryQuiz()">إعادة المحاولة</button>
-        <button class="res-btn ghost"   onclick="goHome()">تغيير النوع</button>
-      </div>
-    </div>
-  </div>
-
-</div><!-- /wrap -->
-
-<script>
-/* ═══════════════════════════════════════
+    <script>
+      /* ═══════════════════════════════════════
    TRUE / FALSE  —  34 Questions
 ═══════════════════════════════════════ */
-const tfQ = [
-  { q:"فضاء T4 هو عبارة عن فضاء سوي مع فضاء T2.", ans:true },
-  { q:"كل فضاء متراص تتابعياً يكون فضاءً متراصاً عدياً.", ans:true },
-  { q:"الترابط المحلي هي صفة غير توبولوجية.", ans:false, fix:"هي صفة توبولوجية." },
-  { q:"يقال عن متتابعة أنها متقاربة إذا وجدت أكثر من نقطة تقارب للمتتابعة.", ans:false, fix:"يشترط نقطة تقارب واحدة فقط." },
-  { q:"كل فضاء T2 هو فضاء T1 والعكس غير صحيح.", ans:true },
-  { q:"صفة الانعزال هي صفة توبولوجية.", ans:true },
-  { q:"صفة التراص المحلي هي صفة توبولوجية.", ans:true },
-  { q:"صفة التراص ليست صفة وراثية.", ans:true },
-  { q:"صفة قابلية الانفصال ليست صفة وراثية.", ans:true },
-  { q:"يقال عن مجموعة E من فضاء توبولوجي أنها مبعثرة إذا كانت نواتها خالية.", ans:true },
-  { q:"التراص صفة ليست توبولوجية.", ans:false, fix:"التراص هي صفة توبولوجية." },
-  { q:"كل فضاء متراص محلياً يكون فضاءً متراصاً.", ans:false, fix:"ليس بالضرورة كل فضاء متراص محلي هو متراص." },
-  { q:"كل مجموعة مترابطة محلياً تكون مترابطة.", ans:false, fix:"ليس بالضرورة." },
-  { q:"كل فضاء T1 هو فضاء T0 ولكن العكس غير صحيح.", ans:true },
-  { q:"إذا كانت الدالة f مستمرة، فإن صورة كل مجموعة كثيفة بنفسها تكون كثيفة بنفسها.", ans:true },
-  { q:"الطول والقطر صفات توبولوجية.", ans:false, fix:"ليست صفات توبولوجية." },
-  { q:"صفة المتتابعة كوشي هي صفة توبولوجية.", ans:false, fix:"ليست صفة توبولوجية." },
-  { q:"صفة كون الفضاء التوبولوجي مبعثراً هي صفة وراثية.", ans:true },
-  { q:"التوبولوجيا المبعثرة على X ليست مترابطة محلياً.", ans:false, fix:"التوبولوجيا المبعثرة هي مترابطة محلياً." },
-  { q:"كل فضاء متري هو فضاء توبولوجي.", ans:true },
-  { q:"التراص العدي لا ينتقل بفعل الدالة المستمرة.", ans:false, fix:"ينتقل بفعل الدالة المستمرة." },
-  { q:"المجموعة الأحادية تشكل قاعدة للتوبولوجيا الضعيفة على X.", ans:false, fix:"تشكل قاعدة للتوبولوجيا المبعثرة." },
-  { q:"الفترات المفتوحة تؤلف قاعدة للتوبولوجيا المبعثرة على X.", ans:false, fix:"تؤلف قاعدة للتوبولوجيا الاعتيادية." },
-  { q:"المساحة صفة توبولوجية.", ans:false, fix:"ليست صفة توبولوجية." },
-  { q:"التوبولوجيا النسبية هي العائلة التي تتألف من اتحاد عناصر T مع X.", ans:false, fix:"تتألف من تقاطع عناصر T مع المجموعة الجزئية من X." },
-  { q:"الترابط صفة مطلقة في الفضاء التوبولوجي.", ans:true },
-  { q:"في الفضاء التوبولوجي، كل مجموعة في فضاء متراص تكون متراصة.", ans:false, fix:"المجموعة المغلقة فقط في فضاء متراص تكون متراصة." },
-  { q:"التراص التتابعي لا ينتقل بفعل الدالة المستمرة.", ans:false, fix:"ينتقل بفعل الدالة المستمرة." },
-  { q:"كل فضاء متري يكون فضاء T2.", ans:true },
-  { q:"تكون المجموعة المتراصة في فضاء T2 مجموعة مغلقة.", ans:true },
-  { q:"مجموعة الأعداد النسبية Q كثيفة في R.", ans:true },
-  { q:"صفة الانعزال صفة وراثية.", ans:true },
-  { q:"كل فضاء مترابط يكون فضاءً مترابطاً دروبياً.", ans:false, fix:"كل فضاء مترابط دروبياً يكون فضاءً مترابطاً، وليس العكس." },
-  { q:"المجموعة الجزئية E تكون كثيفة بنفسها إذا وفقط إذا كان E ⊆ d(E).", ans:true },
-];
+      const tfQ = [
+        { q: "فضاء T4 هو عبارة عن فضاء سوي مع فضاء T2.", ans: true },
+        { q: "كل فضاء متراص تتابعياً يكون فضاءً متراصاً عدياً.", ans: true },
+        {
+          q: "الترابط المحلي هي صفة غير توبولوجية.",
+          ans: false,
+          fix: "هي صفة توبولوجية.",
+        },
+        {
+          q: "يقال عن متتابعة أنها متقاربة إذا وجدت أكثر من نقطة تقارب للمتتابعة.",
+          ans: false,
+          fix: "يشترط نقطة تقارب واحدة فقط.",
+        },
+        { q: "كل فضاء T2 هو فضاء T1 والعكس غير صحيح.", ans: true },
+        { q: "صفة الانعزال هي صفة توبولوجية.", ans: true },
+        { q: "صفة التراص المحلي هي صفة توبولوجية.", ans: true },
+        { q: "صفة التراص ليست صفة وراثية.", ans: true },
+        { q: "صفة قابلية الانفصال ليست صفة وراثية.", ans: true },
+        {
+          q: "يقال عن مجموعة E من فضاء توبولوجي أنها مبعثرة إذا كانت نواتها خالية.",
+          ans: true,
+        },
+        {
+          q: "التراص صفة ليست توبولوجية.",
+          ans: false,
+          fix: "التراص هي صفة توبولوجية.",
+        },
+        {
+          q: "كل فضاء متراص محلياً يكون فضاءً متراصاً.",
+          ans: false,
+          fix: "ليس بالضرورة كل فضاء متراص محلي هو متراص.",
+        },
+        {
+          q: "كل مجموعة مترابطة محلياً تكون مترابطة.",
+          ans: false,
+          fix: "ليس بالضرورة.",
+        },
+        { q: "كل فضاء T1 هو فضاء T0 ولكن العكس غير صحيح.", ans: true },
+        {
+          q: "إذا كانت الدالة f مستمرة، فإن صورة كل مجموعة كثيفة بنفسها تكون كثيفة بنفسها.",
+          ans: true,
+        },
+        {
+          q: "الطول والقطر صفات توبولوجية.",
+          ans: false,
+          fix: "ليست صفات توبولوجية.",
+        },
+        {
+          q: "صفة المتتابعة كوشي هي صفة توبولوجية.",
+          ans: false,
+          fix: "ليست صفة توبولوجية.",
+        },
+        { q: "صفة كون الفضاء التوبولوجي مبعثراً هي صفة وراثية.", ans: true },
+        {
+          q: "التوبولوجيا المبعثرة على X ليست مترابطة محلياً.",
+          ans: false,
+          fix: "التوبولوجيا المبعثرة هي مترابطة محلياً.",
+        },
+        { q: "كل فضاء متري هو فضاء توبولوجي.", ans: true },
+        {
+          q: "التراص العدي لا ينتقل بفعل الدالة المستمرة.",
+          ans: false,
+          fix: "ينتقل بفعل الدالة المستمرة.",
+        },
+        {
+          q: "المجموعة الأحادية تشكل قاعدة للتوبولوجيا الضعيفة على X.",
+          ans: false,
+          fix: "تشكل قاعدة للتوبولوجيا المبعثرة.",
+        },
+        {
+          q: "الفترات المفتوحة تؤلف قاعدة للتوبولوجيا المبعثرة على X.",
+          ans: false,
+          fix: "تؤلف قاعدة للتوبولوجيا الاعتيادية.",
+        },
+        { q: "المساحة صفة توبولوجية.", ans: false, fix: "ليست صفة توبولوجية." },
+        {
+          q: "التوبولوجيا النسبية هي العائلة التي تتألف من اتحاد عناصر T مع X.",
+          ans: false,
+          fix: "تتألف من تقاطع عناصر T مع المجموعة الجزئية من X.",
+        },
+        { q: "الترابط صفة مطلقة في الفضاء التوبولوجي.", ans: true },
+        {
+          q: "في الفضاء التوبولوجي، كل مجموعة في فضاء متراص تكون متراصة.",
+          ans: false,
+          fix: "المجموعة المغلقة فقط في فضاء متراص تكون متراصة.",
+        },
+        {
+          q: "التراص التتابعي لا ينتقل بفعل الدالة المستمرة.",
+          ans: false,
+          fix: "ينتقل بفعل الدالة المستمرة.",
+        },
+        { q: "كل فضاء متري يكون فضاء T2.", ans: true },
+        { q: "تكون المجموعة المتراصة في فضاء T2 مجموعة مغلقة.", ans: true },
+        { q: "مجموعة الأعداد النسبية Q كثيفة في R.", ans: true },
+        { q: "صفة الانعزال صفة وراثية.", ans: true },
+        {
+          q: "كل فضاء مترابط يكون فضاءً مترابطاً دروبياً.",
+          ans: false,
+          fix: "كل فضاء مترابط دروبياً يكون فضاءً مترابطاً، وليس العكس.",
+        },
+        {
+          q: "المجموعة الجزئية E تكون كثيفة بنفسها إذا وفقط إذا كان E ⊆ d(E).",
+          ans: true,
+        },
+        {
+          q: "التبولوجيا المعرفة بالشكل β = {(a, b) : a, b ∈ R, a < b} تعرف بتبولوجيا الغاية العليا.",
+          ans: false,
+          fix: "تعرف بالتبولوجيا الاعتيادية (المعتادة).",
+        },
+        {
+          q: "في أي فضاء توبولوجي تكون المجموعة الخالية والمجموعة الأحادية غير مترابطة.",
+          ans: false,
+          fix: "المجموعة الخالية والمجموعة الأحادية تكونان مترابطتين دائماً.",
+        },
+        {
+          q: "الترابط صفة ليست مطلقة في الفضاء التوبولوجي.",
+          ans: false,
+          fix: "الترابط يعتبر صفة مطلقة.",
+        },
+        {
+          q: "يكون الفضاء التوبولوجي مترابطاً إذا وفقط إذا كانت كل من المجموعتين ∅ و X مغلقة.",
+          ans: false,
+          fix: "يجب أن تكون المجموعتان ∅ و X هما فقط المفتوحتان والمغلقتان في آن واحد، وليس مجرد كونهما مغلقتين.",
+        },
+        { q: "كل فضاء T1 ومنتهٍ يكون فضاءً مبعثراً.", ans: true },
+        {
+          q: "يكون الفضاء (X, T) فضاء T1 إذا وفقط إذا كانت كل مجموعة أحادية فيه مغلقة.",
+          ans: true,
+        },
+        {
+          q: "المجموعة X = R مع التوبولوجيا الاعتيادية، تجعل R قابلة للانفصال.",
+          ans: true,
+        },
+        {
+          q: "الترابط لا ينتقل بفعل الدالة المستمرة.",
+          ans: false,
+          fix: "الترابط ينتقل بفعل الدالة المستمرة (صورة الفضاء المترابط بدالة مستمرة هي فضاء مترابط).",
+        },
+        {
+          q: "التراص العدي صفة ليست توبولوجية.",
+          ans: false,
+          fix: "التراص العدي هو صفة توبولوجية.",
+        },
+        {
+          q: "كل مجموعة مفتوحة في فضاء متراص عدياً تكون متراصة عدياً.",
+          ans: false,
+          fix: "المجموعة المغلقة (وليست المفتوحة) في فضاء متراص عدياً تكون متراصة عدياً.",
+        },
+        {
+          q: "الفترات المفتوحة تؤلف قاعدة للتوبولوجيا المعتادة على R.",
+          ans: true,
+        },
+        {
+          q: "متممات أي مجموعة في فضاء توبولوجي (X, T) تكون مجموعة مفتوحة فيه.",
+          ans: false,
+          fix: "متممات المجموعات المغلقة فقط هي التي تكون مفتوحة.",
+        },
+        {
+          q: "المجموعة المتراصة عدياً في الفضاء التوبولوجي تكون متراصة تتابعياً.",
+          ans: false,
+          fix: "العكس غير صحيح دائماً (المتراصة تتابعياً هي التي تكون متراصة عدياً).",
+        },
+        { q: "صفة الترابط غير وراثية.", ans: true },
+        { q: "التراص ينتقل بفعل الدالة المستمرة.", ans: true },
+        { q: "المجموعة المنعزلة صفة توبولوجية.", ans: true },
+        {
+          q: "التوبولوجيا المبعثرة (X, T) قابلة للانفصال إذا وفقط إذا كانت X قابلة للعد.",
+          ans: true,
+        },
+        { q: "إن خاصية T2 وراثية.", ans: true },
+        { q: "خاصية تحقق بديهية العد الثانية وراثية.", ans: true },
+      ];
 
-/* ═══════════════════════════════════════
-   FILL IN THE BLANK  —  10 Questions
+      /* ═══════════════════════════════════════
+   MULTIPLE CHOICE  —  10 Questions
 ═══════════════════════════════════════ */
 const fillQ = [
   {
-    q:"الفضاء ________ يكون كامل الانتظام إذا وفقط إذا كان منتظماً.",
-    ans:"T3", hint:"نوع فضاء الانعزال",
-    check: v => v.trim() === "T3" || v.trim() === "t3"
+    q: "الفضاء ________ يكون كامل الانتظام إذا وفقط إذا كان منتظماً.",
+    ans: "T3",
+    choices: ["T3", "T0", "T1", "T2"],
   },
   {
-    q:"إن الفضاء السوي صفة ________ وليست صفة ________.",
-    ans:"مطلقة / وراثية",
-    hint:"نوعا الصفة",
-    check: v => {
-      const s = v.trim();
-      return (s.includes("مطلق") && s.includes("وراث")) ||
-             (s.includes("مطلقة") && s.includes("وراثية"));
-    }
+    q: "إن الفضاء السوي صفة ________ وليست صفة ________.",
+    ans: "مطلقة / وراثية",
+    choices: [
+      "مطلقة / وراثية",
+      "وراثية / مطلقة",
+      "توبولوجية / مترية",
+      "محلية / مطلقة",
+    ],
   },
   {
-    q:"أن صفة ________ تنتقل بفعل الدالة المستمرة.",
-    ans:"التراص", hint:"إحدى الصفات التوبولوجية المهمة",
-    check: v => v.trim().includes("تراص") || v.trim().includes("compact")
+    q: "أن صفة ________ تنتقل بفعل الدالة المستمرة.",
+    ans: "التراص",
+    choices: ["التراص", "المسافة", "الطول", "صفة كوشي"],
   },
   {
-    q:"كل مجموعة ________ في فضاء متراص تكون متراصة.",
-    ans:"مغلقة", hint:"نوع المجموعة",
-    check: v => v.trim().includes("مغلق")
+    q: "كل مجموعة ________ في فضاء متراص تكون متراصة.",
+    ans: "مغلقة",
+    choices: ["مغلقة", "مفتوحة", "كثيفة", "منفصلة"],
   },
   {
-    q:"يكون الفضاء التوبولوجي مترابطاً إذا وفقط إذا كانت المجموعتان ________ و ________ هما الوحيدتان المفتوحة والمغلقة في آن واحد.",
-    ans:"ϕ / X", hint:"المجموعة الخالية والفضاء الكلي",
-    check: v => {
-      const s = v.trim();
-      return (s.includes("ϕ") || s.includes("φ") || s.includes("الخالية") || s.includes("∅")) &&
-             (s.includes("X") || s.includes("الكلية") || s.includes("الفضاء"));
-    }
+    q: "يكون الفضاء التوبولوجي مترابطاً إذا وفقط إذا كانت المجموعتان ________ و ________ هما الوحيدتان المفتوحة والمغلقة في آن واحد.",
+    ans: "ϕ / X",
+    choices: ["ϕ / X", "A / B", "Q / R", "U / V"],
   },
   {
-    q:"كل فضاء متري متراص عدياً يكون ________.",
-    ans:"فضاءً متراصاً", hint:"خاصية الفضاء الناتجة",
-    check: v => v.trim().includes("متراص")
+    q: "كل فضاء متري متراص عدياً يكون ________.",
+    ans: "فضاءً متراصاً",
+    choices: [
+      "فضاءً متراصاً",
+      "فضاءً متراصاً تتابعياً",
+      "فضاءً مبعثراً",
+      "فضاءً غير مترابط",
+    ],
   },
   {
-    q:"صفة ________ هي صفة وراثية.",
-    ans:"الانعزال (T1 أو T2)", hint:"أحد معايير الانعزال",
-    check: v => {
-      const s = v.trim();
-      return s.includes("انعزال") || s.includes("T1") || s.includes("T2") || s.includes("t1") || s.includes("t2");
-    }
+    q: "صفة ________ هي صفة وراثية.",
+    ans: "الانعزال (T1 أو T2)",
+    choices: ["الانعزال (T1 أو T2)", "السوية", "التراص", "الترابط"],
   },
   {
-    q:"يقال إن الدالة f: (X,τ)→(Y,τ') تشاكل توبولوجي إذا وفقط إذا كانت ________ و ________ و ________.",
-    ans:"مستمرة / متقابلة / دالة مفتوحة", hint:"ثلاث شروط التشاكل التوبولوجي",
-    check: v => {
-      const s = v.trim();
-      return s.includes("مستمر") && (s.includes("متقابل") || s.includes("تقابل") || s.includes("bijec"));
-    }
+    q: "يقال إن الدالة f: (X,τ)→(Y,τ') تشاكل توبولوجي إذا وفقط إذا كانت ________ و ________ و ________.",
+    ans: "مستمرة / متقابلة / دالة مفتوحة",
+    choices: [
+      "مستمرة / متقابلة / دالة مفتوحة",
+      "مستمرة / غير متقابلة / مغلقة",
+      "متباعدة / شاملة / محدودة",
+      "مفتوحة / ثابتة / غير مستمرة",
+    ],
   },
   {
-    q:"ليكن (X,τ) فضاءً توبولوجياً، يقال إن المجموعة A كثيفة في X إذا وفقط إذا كان ________.",
-    ans:"Ā = X", hint:"علاقة تتضمن الإغلاق",
-    check: v => {
-      const s = v.trim();
-      return s.includes("Ā") || s.includes("A̅") || (s.includes("إغلاق") && s.includes("X")) ||
-             s.replace(/\s/g,'').includes("Ā=X") || s.replace(/\s/g,'').includes("A=X");
-    }
+    q: "ليكن (X,τ) فضاءً توبولوجياً، يقال إن المجموعة A كثيفة في X إذا وفقط إذا كان ________.",
+    ans: "Ā = X",
+    choices: ["Ā = X", "A = ϕ", "A مغلقة فقط", "Ā = A"],
   },
   {
-    q:"المجموعة المتراصة تتابعياً في الفضاء التوبولوجي تكون ________.",
-    ans:"صفة توبولوجية", hint:"طبيعة هذه الخاصية",
-    check: v => v.trim().includes("توبولوج")
+    q: "المجموعة المتراصة تتابعياً في الفضاء التوبولوجي تكون ________.",
+    ans: "صفة توبولوجية",
+    choices: [
+      "صفة توبولوجية",
+      "صفة مترية فقط",
+      "صفة عددية",
+      "صفة غير محفوظة بالتشاكل",
+    ],
   },
+  // --- الأسئلة الإضافية المستخرجة من النماذج لتكتمل المجموعة ---
+  {
+    q: "________ و ________ يمثلان صفات توبولوجية.",
+    ans: "التراص / الترابط",
+    choices: [
+      "التراص / الترابط",
+      "الطول / المساحة",
+      "التقارب / القطر",
+      "الكتلة / الحجم",
+    ],
+  },
+  {
+    q: "صفة ________ و صفة ________ هما صفات وراثية.",
+    ans: "الانعزال / تحقق بديهية العد الأولى",
+    choices: [
+      "الانعزال / تحقق بديهية العد الأولى",
+      "التراص / الترابط",
+      "السوية / التراص المحلي",
+      "الترابط / قابلية الانفصال",
+    ],
+  }
 ];
 
+
 /* ═══════ STATE ═══════ */
-let mode = null, questions = [], cur = 0, score = 0, answered = false;
+      let mode = null,
+        questions = [],
+        cur = 0,
+        score = 0,
+        answered = false;
 
-function shuffle(arr) {
-  const a = [...arr];
-  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
-  return a;
-}
+      function shuffle(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
 
-/* ═══════ NAVIGATION ═══════ */
-function goHome() {
-  document.getElementById('homeScreen').style.display = 'block';
-  document.getElementById('quizScreen').style.display = 'none';
-  document.getElementById('resultScreen').style.display = 'none';
-}
+      /* ═══════ NAVIGATION ═══════ */
+      function goHome() {
+        document.getElementById("homeScreen").style.display = "block";
+        document.getElementById("quizScreen").style.display = "none";
+        document.getElementById("resultScreen").style.display = "none";
+      }
 
-function startQuiz(m) {
-  mode = m;
-  questions = shuffle(m === 'tf' ? tfQ : fillQ);
-  cur = 0; score = 0; answered = false;
+      function startQuiz(m) {
+        mode = m;
+        questions = shuffle(m === "tf" ? tfQ : fillQ);
+        cur = 0;
+        score = 0;
+        answered = false;
 
-  document.getElementById('homeScreen').style.display = 'none';
-  document.getElementById('resultScreen').style.display = 'none';
+        document.getElementById("homeScreen").style.display = "none";
+        document.getElementById("resultScreen").style.display = "none";
 
-  const qs = document.getElementById('quizScreen');
-  qs.style.display = 'block';
-  qs.style.animation = 'none'; qs.offsetHeight;
-  qs.style.animation = 'slideUp .5s ease both';
+        const qs = document.getElementById("quizScreen");
+        qs.style.display = "block";
+        qs.style.animation = "none";
+        qs.offsetHeight;
+        qs.style.animation = "slideUp .5s ease both";
 
-  document.getElementById('qTotal').textContent = questions.length;
-  renderQ();
-}
+        document.getElementById("qTotal").textContent = questions.length;
+        renderQ();
+      }
 
-/* ═══════ RENDER ═══════ */
-function renderQ() {
-  answered = false;
-  const q = questions[cur];
-  const total = questions.length;
+      /* ═══════ RENDER ═══════ */
+      function renderQ() {
+        answered = false;
+        const q = questions[cur];
+        const total = questions.length;
 
-  document.getElementById('qNum').textContent = cur + 1;
-  document.getElementById('scoreDisp').textContent = score;
-  document.getElementById('progFill').style.width = `${(cur/total)*100}%`;
+        document.getElementById("qNum").textContent = cur + 1;
+        document.getElementById("scoreDisp").textContent = score;
+        document.getElementById("progFill").style.width =
+          `${(cur / total) * 100}%`;
 
-  const tag = document.getElementById('qTag');
-  tag.textContent = mode === 'tf' ? 'صح / خطأ' : 'ملء الفراغات';
-  tag.className = 'q-type-tag ' + (mode === 'tf' ? 'tag-tf' : 'tag-fill');
+        const tag = document.getElementById("qTag");
+        tag.textContent = mode === "tf" ? "صح / خطأ" : "اختيار من متعدد";
+        tag.className = "q-type-tag " + (mode === "tf" ? "tag-tf" : "tag-fill");
 
-  document.getElementById('qText').innerHTML = q.q;
+        document.getElementById("qText").innerHTML = q.q;
 
-  const area = document.getElementById('answersArea');
-  area.innerHTML = '';
+        const area = document.getElementById("answersArea");
+        area.innerHTML = "";
 
-  if (mode === 'tf') {
-    area.innerHTML = `
+        if (mode === "tf") {
+          area.innerHTML = `
       <div class="tf-row">
         <button class="tf-btn btn-true"  onclick="checkTF(true,this)">✓ صح</button>
         <button class="tf-btn btn-false" onclick="checkTF(false,this)">✗ خطأ</button>
       </div>`;
-  } else {
-    area.innerHTML = `
-      <div class="fill-area">
-        <div class="fill-input-wrap">
-          <input class="fill-input" id="fillInput" type="text" placeholder="اكتب إجابتك هنا..." dir="rtl"
-            onkeydown="if(event.key==='Enter') checkFill()"/>
-        </div>
-        <p class="fill-hint">💡 تلميح: ${q.hint}</p>
-        <button class="check-btn" id="checkBtn" onclick="checkFill()">تحقق من الإجابة</button>
+        } else {
+          area.innerHTML = `
+      <div class="choice-grid">
+        ${shuffle(q.choices)
+          .map(
+            (choice) => `
+          <button class="choice-btn" onclick="checkChoice('${encodeURIComponent(choice)}', this)">${choice}</button>
+        `,
+          )
+          .join("")}
       </div>`;
-    setTimeout(() => document.getElementById('fillInput')?.focus(), 100);
-  }
+        }
 
-  document.getElementById('explanation').className = 'explanation';
-  document.getElementById('explanation').innerHTML = '';
-  document.getElementById('nextBtn').className = 'next-btn';
-}
+        document.getElementById("explanation").className = "explanation";
+        document.getElementById("explanation").innerHTML = "";
+        document.getElementById("nextBtn").className = "next-btn";
+      }
 
-/* ═══════ CHECK TF ═══════ */
-function checkTF(chosen, btn) {
-  if (answered) return;
-  answered = true;
-  const q = questions[cur];
-  document.querySelectorAll('.tf-btn').forEach(b => b.disabled = true);
+      /* ═══════ CHECK TF ═══════ */
+      function checkTF(chosen, btn) {
+        if (answered) return;
+        answered = true;
+        const q = questions[cur];
+        document
+          .querySelectorAll(".tf-btn")
+          .forEach((b) => (b.disabled = true));
 
-  if (chosen === q.ans) {
-    btn.classList.add('is-correct'); score++;
-    showExp('✓ إجابة صحيحة!', null);
-  } else {
-    btn.classList.add('is-wrong');
-    document.querySelectorAll('.tf-btn').forEach(b => {
-      const isTrue = b.classList.contains('btn-true');
-      if ((isTrue && q.ans===true) || (!isTrue && q.ans===false)) b.classList.add('is-correct');
-    });
-    const fix = q.fix ? `التصحيح: ${q.fix}` : `الإجابة الصحيحة: ${q.ans ? 'صح' : 'خطأ'}`;
-    showExp('✗ إجابة خاطئة', fix);
-  }
-}
+        if (chosen === q.ans) {
+          btn.classList.add("is-correct");
+          score++;
+          showExp("✓ إجابة صحيحة!", null);
+        } else {
+          btn.classList.add("is-wrong");
+          document.querySelectorAll(".tf-btn").forEach((b) => {
+            const isTrue = b.classList.contains("btn-true");
+            if ((isTrue && q.ans === true) || (!isTrue && q.ans === false))
+              b.classList.add("is-correct");
+          });
+          const fix = q.fix
+            ? `التصحيح: ${q.fix}`
+            : `الإجابة الصحيحة: ${q.ans ? "صح" : "خطأ"}`;
+          showExp("✗ إجابة خاطئة", fix);
+        }
+      }
 
-/* ═══════ CHECK FILL ═══════ */
-function checkFill() {
-  if (answered) return;
-  const inp = document.getElementById('fillInput');
-  if (!inp || !inp.value.trim()) return;
-  answered = true;
-  const q = questions[cur];
-  const val = inp.value;
-  document.getElementById('checkBtn').disabled = true;
-  inp.disabled = true;
+      /* ═══════ CHECK MULTIPLE CHOICE ═══════ */
+      function checkChoice(encodedChoice, btn) {
+        if (answered) return;
+        answered = true;
+        const q = questions[cur];
+        const chosen = decodeURIComponent(encodedChoice);
+        document
+          .querySelectorAll(".choice-btn")
+          .forEach((b) => (b.disabled = true));
 
-  if (q.check(val)) {
-    inp.classList.add('correct'); score++;
-    showExp('✓ إجابة صحيحة!', null);
-  } else {
-    inp.classList.add('wrong');
-    showExp('✗ إجابة خاطئة', `الإجابة الصحيحة: ${q.ans}`);
-  }
-}
+        if (chosen === q.ans) {
+          btn.classList.add("is-correct");
+          score++;
+          showExp("✓ إجابة صحيحة!", null);
+        } else {
+          btn.classList.add("is-wrong");
+          document.querySelectorAll(".choice-btn").forEach((b) => {
+            if (b.textContent.trim() === q.ans) b.classList.add("is-correct");
+          });
+          showExp("✗ إجابة خاطئة", `الإجابة الصحيحة: ${q.ans}`);
+        }
+      }
 
-function showExp(label, detail) {
-  const el = document.getElementById('explanation');
-  el.innerHTML = `<strong>${label}</strong>${detail ? '<br>' + detail : ''}`;
-  el.classList.add('show');
-  document.getElementById('nextBtn').classList.add('show');
-}
+      function showExp(label, detail) {
+        const el = document.getElementById("explanation");
+        el.innerHTML = `<strong>${label}</strong>${detail ? "<br>" + detail : ""}`;
+        el.classList.add("show");
+        document.getElementById("nextBtn").classList.add("show");
+      }
 
-/* ═══════ NEXT ═══════ */
-function nextQ() {
-  cur++;
-  if (cur >= questions.length) { showResults(); return; }
-  const card = document.querySelector('.q-card');
-  card.style.animation = 'none'; card.offsetHeight;
-  card.style.animation = 'slideUp .35s ease both';
-  renderQ();
-}
+      /* ═══════ NEXT ═══════ */
+      function nextQ() {
+        cur++;
+        if (cur >= questions.length) {
+          showResults();
+          return;
+        }
+        const card = document.querySelector(".q-card");
+        card.style.animation = "none";
+        card.offsetHeight;
+        card.style.animation = "slideUp .35s ease both";
+        renderQ();
+      }
 
-/* ═══════ RESULTS ═══════ */
-function showResults() {
-  document.getElementById('quizScreen').style.display = 'none';
-  const pct = Math.round((score / questions.length) * 100);
+      /* ═══════ RESULTS ═══════ */
+      function showResults() {
+        document.getElementById("quizScreen").style.display = "none";
+        const pct = Math.round((score / questions.length) * 100);
 
-  document.getElementById('resCorrect').textContent = score;
-  document.getElementById('resWrong').textContent = questions.length - score;
-  document.getElementById('resTotal').textContent = questions.length;
-  document.getElementById('ringPct').innerHTML = `${pct}<small>%</small>`;
+        document.getElementById("resCorrect").textContent = score;
+        document.getElementById("resWrong").textContent =
+          questions.length - score;
+        document.getElementById("resTotal").textContent = questions.length;
+        document.getElementById("ringPct").innerHTML = `${pct}<small>%</small>`;
 
-  const circ = 2 * Math.PI * 56;
-  const arc = document.getElementById('ringArc');
-  arc.style.strokeDasharray = circ;
-  arc.style.strokeDashoffset = circ;
+        const circ = 2 * Math.PI * 56;
+        const arc = document.getElementById("ringArc");
+        arc.style.strokeDasharray = circ;
+        arc.style.strokeDashoffset = circ;
 
-  let emoji, title, sub, color;
-  if (pct === 100) { emoji='🏆'; title='نتيجة مثالية!'; sub='شنو انت , مهكر المادة ,نام وانت مرتاح '; color='#10b981'; }
-  else if (pct>=80){ emoji='🌟'; title='ممتاز جداً!'; sub='عاشت ايدك ,بطل ,استمر '; color='#10b981'; }
-  else if (pct>=60){ emoji='👍'; title='جيد!'; sub='مستوى جيد، راجع الأسئلة الخاطئة'; color='#f59e0b'; }
-  else if (pct>=40){ emoji='📚'; title='تحتاج مراجعة'; sub='موخوش درجة '; color='#f59e0b'; }
-  else             { emoji='💪'; title='بس لا تيأس!'; sub='سختجي كوم اقرة هذا فاينل '; color='#ef4444'; }
+        let emoji, title, sub, color;
+        if (pct === 100) {
+          emoji = "🏆";
+          title = "بطل الابطال!";
+          sub = "شنو انت , مهكر المادة ,نام وانت مرتاح ";
+          color = "#10b981";
+        } else if (pct >= 80) {
+          emoji = "🌟";
+          title = "بطللل !";
+          sub = "عاشت ايدك ,بطل ,استمر , نحن معك ";
+          color = "#10b981";
+        } else if (pct >= 60) {
+          emoji = "👍";
+          title = "جيد!";
+          sub = "عفية عليك ";
+          color = "#f59e0b";
+        } else if (pct >= 40) {
+          emoji = "📚";
+          title = "موخوش درجة ";
+          sub = "قرايتك مال كلاوات , امشي اقرة زين ";
+          color = "#f59e0b";
+        } else {
+          emoji = "💪";
+          title = "بس لا تيأس!";
+          sub = "سختجي كوم اقرة هذا فاينل ";
+          color = "#ef4444";
+        }
 
-  arc.style.stroke = color;
-  document.getElementById('resEmoji').textContent = emoji;
-  document.getElementById('resTitle').textContent = title;
-  document.getElementById('resSub').textContent = sub;
+        arc.style.stroke = color;
+        document.getElementById("resEmoji").textContent = emoji;
+        document.getElementById("resTitle").textContent = title;
+        document.getElementById("resSub").textContent = sub;
 
-  const res = document.getElementById('resultScreen');
-  res.style.display = 'block';
+        const res = document.getElementById("resultScreen");
+        res.style.display = "block";
 
-  setTimeout(() => {
-    arc.style.strokeDashoffset = circ - (pct / 100) * circ;
-  }, 150);
-}
+        setTimeout(() => {
+          arc.style.strokeDashoffset = circ - (pct / 100) * circ;
+        }, 150);
+      }
 
-function retryQuiz() {
-  document.getElementById('resultScreen').style.display = 'none';
-  startQuiz(mode);
-}
-</script>
-</body>
+      function retryQuiz() {
+        document.getElementById("resultScreen").style.display = "none";
+        startQuiz(mode);
+      }
+    </script>
+  </body>
 </html>
